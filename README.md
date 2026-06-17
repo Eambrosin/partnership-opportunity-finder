@@ -1,20 +1,22 @@
 # 🤝 AI Partnership Opportunity Finder
 
-Identify, score and prioritize strategic partnership opportunities using a data-driven framework designed for Business Development, Strategic Partnerships, GTM and International Expansion teams.
+### Live Demo
+
+https://partnership-opportunity-finder-eambrosin.streamlit.app/
+
+### GitHub Repository
+
+https://github.com/Eambrosin/partnership-opportunity-finder
 
 ---
 
 ## Executive Summary
 
-AI Partnership Opportunity Finder helps organizations evaluate potential partnerships through a structured scoring framework that combines:
+AI Partnership Opportunity Finder is an AI-powered platform designed to help Business Development, Strategic Partnerships, GTM and International Expansion teams identify, score and prioritize partnership opportunities.
 
-* Strategic Alignment
-* Market Overlap
-* Expansion Potential
-* Relationship Signals
-* Commercial Opportunity Value
+The platform combines strategic alignment, market overlap, relationship strength, expansion potential and commercial opportunity value into a structured scoring framework that supports executive decision-making.
 
-The platform transforms partnership data into actionable recommendations, helping teams focus on the highest-impact opportunities.
+Organizations can rapidly evaluate partnership portfolios, uncover high-priority opportunities and generate executive-level partnership intelligence through a single interactive workspace.
 
 ---
 
@@ -22,42 +24,51 @@ The platform transforms partnership data into actionable recommendations, helpin
 
 ### Executive Partnership Dashboard
 
-Provides a high-level view of:
+Provides an executive overview of:
 
-* Total opportunities
-* Pipeline value
-* Average fit score
-* High-priority partnerships
+* Total Opportunities
+* Pipeline Value
+* Average Partnership Fit Score
+* High-Priority Opportunities
+* Top Strategic Fit
+* Top Revenue Opportunity
+* Top Expansion Opportunity
 
 ---
 
 ### Partnership Fit Scoring Engine
 
-Automatically scores opportunities using:
+Automatically scores partnership opportunities based on:
 
-* Regional attractiveness
-* Industry relevance
-* Market overlap
-* Relationship strength
-* Opportunity value
+* Regional Attractiveness
+* Industry Alignment
+* Market Overlap
+* Relationship Signals
+* Opportunity Value
+
+Each opportunity receives:
+
+* Partnership Fit Score
+* Strategic Classification
+* Priority Level
 
 ---
 
 ### Opportunity Heatmap
 
-Visualizes:
+Interactive visualization displaying:
 
 * Partnership Fit Score
-* Deal Value
+* Commercial Opportunity Value
 * Priority Level
 
-Helping teams quickly identify high-impact opportunities.
+Helping teams quickly identify the highest-impact opportunities.
 
 ---
 
 ### Regional Expansion Dashboard
 
-Analyze opportunity distribution across regions:
+Analyze strategic opportunities by region:
 
 * LATAM
 * MENA
@@ -66,27 +77,52 @@ Analyze opportunity distribution across regions:
 * APAC
 * Africa
 
+Track:
+
+* Total Pipeline Value
+* Opportunity Distribution
+* Regional Prioritization
+
 ---
 
 ### Partner Portfolio Analysis
 
-Evaluate partnership mix by:
+Evaluate the composition of the partnership ecosystem by:
 
 * Distribution Partners
 * Technology Partners
-* Strategic Alliances
+* Strategic Partners
 * Investment Partners
 * Operational Partners
+
+Understand where partnership investments should be concentrated.
 
 ---
 
 ### Executive Recommendation Center
 
-Automatically highlights:
+Automatically surfaces:
 
-* Top strategic opportunities
-* Highest-value partnerships
-* Recommended next actions
+* Top Strategic Opportunities
+* Highest-Impact Partnerships
+* Executive-Level Recommendations
+* Recommended Next Actions
+
+Designed to support leadership decision-making and resource allocation.
+
+---
+
+### AI Partnership Intelligence Layer
+
+Generates AI-style strategic insights including:
+
+* Strategic Fit Assessment
+* Expansion Potential Analysis
+* Synergy Analysis
+* Partnership Thesis
+* AI Partnership Insight
+* Recommended Introduction Strategy
+* Next Best Action
 
 ---
 
@@ -94,28 +130,28 @@ Automatically highlights:
 
 Detailed opportunity analysis including:
 
-* Strategic Fit
-* Expansion Potential
-* Synergy Analysis
-* Partnership Thesis
-* AI Partnership Insight
-* Recommended Intro Strategy
-* Next Best Action
+* Company Profile
+* Partnership Context
+* Strategic Assessment
+* Commercial Opportunity Review
+* Executive Recommendations
 
 ---
 
 ### Export Center
 
-Export results as:
+Export outputs as:
 
-* CSV
+* Ranked Partnership CSV
 * Executive Partnership Brief (.txt)
+
+Supporting internal reviews, stakeholder communication and executive presentations.
 
 ---
 
 ## Screenshots
 
-### Executive Dashboard
+### Executive Partnership Dashboard
 
 ![Executive Dashboard](screenshots/executive-dashboard.png)
 
@@ -141,12 +177,14 @@ Export results as:
 
 ## Sample Dataset
 
-The project includes a sample dataset covering:
+The project includes sample partnership opportunities across multiple sectors and regions.
+
+Industries:
 
 * Agribusiness
 * Renewable Energy
 * Fintech
-* Logistics
+* Logistics & Trade
 * Real Estate
 
 Regions:
@@ -155,9 +193,49 @@ Regions:
 * MENA
 * Europe
 
+The sample data demonstrates how organizations can evaluate partnership portfolios and prioritize strategic alliances.
+
 ---
 
-## Tech Stack
+## Strategic Use Cases
+
+### Business Development
+
+* Partnership Opportunity Qualification
+* Commercial Opportunity Prioritization
+* Strategic Account Expansion
+* Pipeline Management
+
+---
+
+### Strategic Partnerships
+
+* Partner Evaluation
+* Alliance Development
+* Ecosystem Expansion
+* Strategic Collaboration Assessment
+
+---
+
+### GTM Strategy
+
+* Channel Strategy Planning
+* Market Entry Partnerships
+* Distribution Expansion
+* Commercial Growth Initiatives
+
+---
+
+### International Expansion
+
+* Regional Opportunity Mapping
+* Cross-Border Expansion Analysis
+* Market Access Planning
+* Strategic Growth Prioritization
+
+---
+
+## Technology Stack
 
 * Python
 * Streamlit
@@ -189,31 +267,23 @@ streamlit run app.py
 
 ---
 
-## Strategic Use Cases
+## Project Structure
 
-### Business Development
+```text
+partnership-opportunity-finder/
 
-* Opportunity prioritization
-* Partnership pipeline management
-* Strategic account planning
-
-### Strategic Partnerships
-
-* Alliance assessment
-* Ecosystem mapping
-* Partner qualification
-
-### GTM Strategy
-
-* Channel partnerships
-* Distribution expansion
-* Market entry planning
-
-### International Expansion
-
-* Regional prioritization
-* Market access strategies
-* Cross-border growth planning
+├── app.py
+├── requirements.txt
+├── README.md
+├── data/
+│   └── sample_partnerships.csv
+├── screenshots/
+│   ├── executive-dashboard.png
+│   ├── opportunity-heatmap.png
+│   ├── recommendation-center.png
+│   └── intelligence-workspace.png
+└── exports/
+```
 
 ---
 
@@ -221,12 +291,14 @@ streamlit run app.py
 
 Potential future versions may include:
 
-* OpenAI-powered partnership intelligence
-* CRM integration
-* Automated partner discovery
-* Partner ecosystem mapping
-* Executive briefing generation
-* Multi-market scenario analysis
+* OpenAI Integration
+* Partnership Discovery Engine
+* CRM Integrations
+* Partner Ecosystem Mapping
+* Executive Briefing Automation
+* Multi-Market Scenario Planning
+* Partnership Risk Assessment
+* Strategic Alliance Benchmarking
 
 ---
 
@@ -237,4 +309,41 @@ Potential future versions may include:
 Business Development | Strategic Partnerships | GTM Strategy | Revenue Operations | International Expansion | AI Applications
 
 GitHub:
+
 https://github.com/Eambrosin
+
+LinkedIn:
+
+https://www.linkedin.com/in/eduardoambrosin/
+
+---
+
+## Portfolio Projects
+
+### AI Lead Qualification & Revenue Prioritization Platform
+
+GitHub:
+https://github.com/Eambrosin/lead-qualification-scorer
+
+Live Demo:
+https://lead-qualification-scorer-eambrosin.streamlit.app/
+
+---
+
+### AI Outreach Intelligence Platform
+
+GitHub:
+https://github.com/Eambrosin/outreach-sequence-generator
+
+Live Demo:
+https://outreach-sequence-generator-7dcmglcxfnmszlodg8lqre.streamlit.app/
+
+---
+
+### AI Partnership Opportunity Finder
+
+GitHub:
+https://github.com/Eambrosin/partnership-opportunity-finder
+
+Live Demo:
+https://partnership-opportunity-finder-eambrosin.streamlit.app/
