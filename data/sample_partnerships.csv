@@ -1,0 +1,7 @@
+company,partner,country,region,industry,partner_type,strategic_goal,market_overlap,deal_value_usd,relationship_signal
+Andina AgroExport,LatAm Distribution Group,Colombia,LATAM,Agribusiness,Distribution Partner,Expand regional distribution,high,250000,warm
+Solis Renewables,Gulf Energy Ventures,Brazil,MENA,Renewable Energy,Strategic Partner,Enter GCC renewable energy market,medium,400000,hot
+Sahara Fintech,OpenBank Alliance,Saudi Arabia,MENA,Fintech,Technology Partner,Launch embedded finance partnerships,high,300000,warm
+Lusitana Properties,EuroCapital Partners,Portugal,EU,Real Estate,Investment Partner,Source cross-border investment opportunities,medium,180000,cold
+Continental Foods,Andes Retail Network,Mexico,LATAM,Agribusiness,Channel Partner,Build regional retail access,high,220000,hot
+Gulf Trade Partners,PortLink Logistics,UAE,MENA,Logistics & Trade,Operational Partner,Improve cross-border trade execution,high,500000,warm
