@@ -133,6 +133,35 @@ def intro_strategy(row):
     return "Keep in nurture and monitor for stronger timing or relationship signal."
 
 
+def ai_partnership_insight(row):
+    signals = []
+
+    if row["partnership_fit_score"] >= 80:
+        signals.append("strong strategic alignment")
+    if str(row["market_overlap"]).lower() == "high":
+        signals.append("high market overlap")
+    if str(row["relationship_signal"]).lower() == "hot":
+        signals.append("strong relationship momentum")
+    if row["region"] in ["MENA", "LATAM", "AFRICA"]:
+        signals.append("meaningful international expansion potential")
+
+    signal_text = ", ".join(signals) if signals else "moderate strategic alignment with selective commercial upside"
+
+    return (
+        f"This partnership shows {signal_text}. "
+        f"The recommended approach is to validate executive-level alignment, assess commercial synergies, "
+        f"and define a clear partnership motion around {str(row['strategic_goal']).lower()}."
+    )
+
+
+def next_best_action(row):
+    if row["priority_level"] == "High":
+        return "Schedule an executive discovery call and prepare a joint value hypothesis."
+    if row["priority_level"] == "Medium":
+        return "Send a targeted introduction and validate market timing, decision-makers and mutual priorities."
+    return "Keep the opportunity in nurture and monitor for improved timing, signal strength or market relevance."
+
+
 def render_card(title, content, icon="📌"):
     st.markdown(f"### {icon} {title}")
     st.markdown(
@@ -153,7 +182,10 @@ def render_card(title, content, icon="📌"):
 
 
 st.title("🤝 AI Partnership Opportunity Finder")
-st.caption("Identify, score and prioritize strategic partnership opportunities for Business Development, Partnerships and GTM teams.")
+st.caption(
+    "Identify, score and prioritize strategic partnership opportunities for "
+    "Business Development, Partnerships, GTM and International Expansion teams."
+)
 
 uploaded = st.file_uploader("Upload Partnerships CSV", type=["csv"])
 
@@ -181,7 +213,10 @@ if missing_columns:
     st.error("Missing columns in CSV: " + ", ".join(missing_columns))
     st.stop()
 
+df["deal_value_usd"] = pd.to_numeric(df["deal_value_usd"], errors="coerce").fillna(0)
+
 max_deal_value = df["deal_value_usd"].max()
+
 df["partnership_fit_score"] = df.apply(lambda row: score_partnership(row, max_deal_value), axis=1)
 df["fit_tier"] = df["partnership_fit_score"].apply(fit_tier)
 df["priority_level"] = df["partnership_fit_score"].apply(priority_level)
@@ -191,12 +226,15 @@ df["expansion_potential"] = df.apply(expansion_potential, axis=1)
 df["synergy_analysis"] = df.apply(synergy_analysis, axis=1)
 df["partnership_thesis"] = df.apply(partnership_thesis, axis=1)
 df["recommended_intro_strategy"] = df.apply(intro_strategy, axis=1)
+df["ai_partnership_insight"] = df.apply(ai_partnership_insight, axis=1)
+df["next_best_action"] = df.apply(next_best_action, axis=1)
 
 df = df.sort_values("partnership_fit_score", ascending=False).reset_index(drop=True)
 
 st.subheader("📊 Executive Partnership Summary")
 
 col1, col2, col3, col4 = st.columns(4)
+
 col1.metric("Total Opportunities", len(df))
 col2.metric("Pipeline Value", f"${df['deal_value_usd'].sum():,.0f}")
 col3.metric("Avg Fit Score", round(df["partnership_fit_score"].mean(), 1))
@@ -208,7 +246,9 @@ st.subheader("👔 Executive Partnership Dashboard")
 
 top_fit = df.iloc[0]
 top_revenue = df.sort_values("deal_value_usd", ascending=False).iloc[0]
-top_expansion = df[df["region"].isin(["MENA", "LATAM", "AFRICA"])].sort_values("partnership_fit_score", ascending=False)
+top_expansion = df[df["region"].isin(["MENA", "LATAM", "AFRICA"])].sort_values(
+    "partnership_fit_score", ascending=False
+)
 
 if len(top_expansion) > 0:
     top_expansion_row = top_expansion.iloc[0]
@@ -218,16 +258,34 @@ else:
 dash_col_1, dash_col_2, dash_col_3 = st.columns(3)
 
 with dash_col_1:
-    st.metric("Top Strategic Fit", f"{top_fit['company']} + {top_fit['partner']}", f"Score {top_fit['partnership_fit_score']}")
-    st.metric("Top Revenue Opportunity", f"{top_revenue['company']} + {top_revenue['partner']}", format_money(top_revenue["deal_value_usd"]))
+    st.metric(
+        "Top Strategic Fit",
+        f"{top_fit['company']} + {top_fit['partner']}",
+        f"Score {top_fit['partnership_fit_score']}",
+    )
+    st.metric(
+        "Top Revenue Opportunity",
+        f"{top_revenue['company']} + {top_revenue['partner']}",
+        format_money(top_revenue["deal_value_usd"]),
+    )
 
 with dash_col_2:
-    st.metric("Top Expansion Opportunity", f"{top_expansion_row['company']} + {top_expansion_row['partner']}", top_expansion_row["region"])
+    st.metric(
+        "Top Expansion Opportunity",
+        f"{top_expansion_row['company']} + {top_expansion_row['partner']}",
+        top_expansion_row["region"],
+    )
     st.metric("Strategic Fit Opportunities", len(df[df["fit_tier"] == "Strategic Fit"]))
 
 with dash_col_3:
-    st.metric("Hot Relationship Signals", len(df[df["relationship_signal"].astype(str).str.lower() == "hot"]))
-    st.metric("High Market Overlap", len(df[df["market_overlap"].astype(str).str.lower() == "high"]))
+    st.metric(
+        "Hot Relationship Signals",
+        len(df[df["relationship_signal"].astype(str).str.lower() == "hot"]),
+    )
+    st.metric(
+        "High Market Overlap",
+        len(df[df["market_overlap"].astype(str).str.lower() == "high"]),
+    )
 
 st.markdown("#### Executive Interpretation")
 st.write(
@@ -238,6 +296,100 @@ st.write(
     f"The largest revenue opportunity is **{top_revenue['company']} + {top_revenue['partner']}**, "
     f"with an estimated value of **{format_money(top_revenue['deal_value_usd'])}**."
 )
+
+st.divider()
+
+st.subheader("🔥 Opportunity Heatmap")
+
+heatmap_fig = px.scatter(
+    df,
+    x="deal_value_usd",
+    y="partnership_fit_score",
+    size="deal_value_usd",
+    color="priority_level",
+    hover_name="partner",
+    hover_data=["company", "region", "industry", "partner_type"],
+    labels={
+        "deal_value_usd": "Deal Value USD",
+        "partnership_fit_score": "Partnership Fit Score",
+        "priority_level": "Priority Level",
+    },
+    title="Partnership Fit vs Deal Value",
+)
+
+st.plotly_chart(heatmap_fig, use_container_width=True, config=PLOTLY_CONFIG)
+
+st.divider()
+
+st.subheader("🌍 Regional Expansion Dashboard")
+
+regional_df = (
+    df.groupby("region", as_index=False)
+    .agg(
+        total_pipeline_value=("deal_value_usd", "sum"),
+        avg_fit_score=("partnership_fit_score", "mean"),
+        opportunities=("company", "count"),
+    )
+    .sort_values("total_pipeline_value", ascending=False)
+)
+
+regional_fig = px.bar(
+    regional_df,
+    x="region",
+    y="total_pipeline_value",
+    text="total_pipeline_value",
+    hover_data=["avg_fit_score", "opportunities"],
+    labels={
+        "region": "Region",
+        "total_pipeline_value": "Total Pipeline Value",
+        "avg_fit_score": "Average Fit Score",
+        "opportunities": "Opportunities",
+    },
+    title="Pipeline Value by Region",
+)
+
+st.plotly_chart(regional_fig, use_container_width=True, config=PLOTLY_CONFIG)
+
+st.divider()
+
+st.subheader("🤝 Partner Portfolio Analysis")
+
+partner_type_df = (
+    df.groupby("partner_type", as_index=False)
+    .agg(
+        opportunities=("company", "count"),
+        pipeline_value=("deal_value_usd", "sum"),
+    )
+    .sort_values("pipeline_value", ascending=False)
+)
+
+portfolio_fig = px.pie(
+    partner_type_df,
+    names="partner_type",
+    values="pipeline_value",
+    title="Pipeline Value by Partner Type",
+)
+
+st.plotly_chart(portfolio_fig, use_container_width=True, config=PLOTLY_CONFIG)
+
+st.divider()
+
+st.subheader("🏆 Executive Recommendation Center")
+
+top_3 = df.head(3)
+
+for index, row in top_3.iterrows():
+    render_card(
+        f"#{index + 1} {row['company']} + {row['partner']}",
+        (
+            f"Score: {row['partnership_fit_score']}\n"
+            f"Priority: {row['priority_level']}\n"
+            f"Value: {format_money(row['deal_value_usd'])}\n\n"
+            f"{row['ai_partnership_insight']}\n\n"
+            f"Next Best Action: {row['next_best_action']}"
+        ),
+        "🏆",
+    )
 
 st.divider()
 
@@ -257,11 +409,13 @@ display_columns = [
     "fit_tier",
     "priority_level",
     "recommended_intro_strategy",
+    "next_best_action",
 ]
 
 st.dataframe(df[display_columns], width="stretch")
 
 csv = df.to_csv(index=False).encode("utf-8")
+
 st.download_button(
     "⬇ Download Partnership Opportunities CSV",
     csv,
@@ -278,12 +432,10 @@ st.subheader("🧩 Partnership Intelligence Workspace")
 
 selected_option = st.selectbox(
     "Select a partnership opportunity",
-    [f"{row['company']} + {row['partner']}" for _, row in df.iterrows()]
+    [f"{row['company']} + {row['partner']}" for _, row in df.iterrows()],
 )
 
-selected_row = df[
-    (df["company"] + " + " + df["partner"]) == selected_option
-].iloc[0]
+selected_row = df[(df["company"] + " + " + df["partner"]) == selected_option].iloc[0]
 
 profile_col_1, profile_col_2, profile_col_3 = st.columns(3)
 
@@ -320,7 +472,8 @@ with intelligence_col_1:
 with intelligence_col_2:
     render_card("Expansion Potential", selected_row["expansion_potential"], "🌍")
     render_card("Partnership Thesis", selected_row["partnership_thesis"], "🤝")
-    render_card("Next Best Action", "Prepare a tailored introduction message and validate mutual strategic priorities.", "🚀")
+    render_card("AI Partnership Insight", selected_row["ai_partnership_insight"], "🧠")
+    render_card("Next Best Action", selected_row["next_best_action"], "🚀")
 
 output_text = f"""Partnership Opportunity Brief
 
@@ -350,9 +503,21 @@ Partnership Thesis:
 
 Recommended Intro Strategy:
 {selected_row['recommended_intro_strategy']}
+
+AI Partnership Insight:
+{selected_row['ai_partnership_insight']}
+
+Next Best Action:
+{selected_row['next_best_action']}
 """
 
-safe_name = f"{selected_row['company']}_{selected_row['partner']}".lower().replace(" ", "_").replace("/", "_")
+safe_name = (
+    f"{selected_row['company']}_{selected_row['partner']}"
+    .lower()
+    .replace(" ", "_")
+    .replace("/", "_")
+)
+
 brief_path = f"exports/{safe_name}_partnership_brief.txt"
 
 with open(brief_path, "w", encoding="utf-8") as f:
