@@ -42,6 +42,54 @@ The objective is to create a practical intelligence layer between **partner disc
 
 ---
 
+## Product Walkthrough
+
+### Executive Partnership Summary
+
+A portfolio-level view of the partnership pipeline, including opportunity volume, estimated commercial value, average Partnership Intelligence Score, Strategic Fit opportunities and High Priority opportunities.
+
+![Executive Partnership Summary](screenshots/01-executive-summary.png)
+
+---
+
+### Executive Partnership Dashboard
+
+The executive dashboard surfaces the strongest opportunities across strategic fit, relationship strength, commercial value and market access.
+
+![Executive Partnership Dashboard](screenshots/02-executive-dashboard.png)
+
+---
+
+### Partnership Opportunity Map
+
+The opportunity map compares **Partnership Intelligence Score against estimated commercial value**, helping distinguish strategic opportunities from commercially attractive but lower-fit opportunities.
+
+![Partnership Opportunity Map](screenshots/03-opportunity-map.png)
+
+---
+
+### Explainable Partnership Scoring
+
+Every Partnership Intelligence Score can be decomposed into its underlying commercial dimensions.
+
+The workspace exposes raw component scores, active weights and weighted contributions, making the ranking transparent and auditable.
+
+![Explainable Partnership Score](screenshots/04-explainable-score.png)
+
+The detailed opportunity analysis then connects the numerical score with strategic interpretation, partnership archetype and commercial recommendations.
+
+![Explainable Partnership Intelligence](screenshots/05-explainable-score.png)
+
+---
+
+### Partnership Intelligence Workspace
+
+Each opportunity can be investigated individually through a structured commercial workspace combining company context, partnership fit, strategic interpretation, expansion potential, partnership thesis and recommended next action.
+
+![Partnership Intelligence Workspace](screenshots/06-partnership-workspace.png)
+
+---
+
 ## What Problem Does It Solve?
 
 Partnership opportunities are often evaluated using fragmented information such as:
