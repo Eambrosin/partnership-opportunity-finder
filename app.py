@@ -1,48 +1,33 @@
-import os
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+from partnership_engine import (
+    DEFAULT_CONFIG,
+    build_runtime_config,
+    rank_partnerships,
+)
+
+
+# ============================================================
+# PAGE CONFIGURATION
+# ============================================================
 
 st.set_page_config(
-    page_title="AI Partnership Opportunity Finder",
+    page_title="Partnership Intelligence Platform",
     page_icon="🤝",
     layout="wide",
 )
 
-PLOTLY_CONFIG = {"displayModeBar": False, "responsive": True}
-
-
-REGION_SCORES = {
-    "LATAM": 90,
-    "MENA": 95,
-    "EU": 75,
-    "NA": 70,
-    "APAC": 65,
-    "AFRICA": 80,
+PLOTLY_CONFIG = {
+    "displayModeBar": False,
+    "responsive": True,
 }
 
-INDUSTRY_SCORES = {
-    "Renewable Energy": 95,
-    "Agribusiness": 90,
-    "Logistics & Trade": 90,
-    "Fintech": 85,
-    "Real Estate": 75,
-    "Other": 50,
-}
 
-OVERLAP_SCORES = {
-    "high": 100,
-    "medium": 70,
-    "low": 40,
-}
-
-RELATIONSHIP_SCORES = {
-    "hot": 100,
-    "warm": 70,
-    "cold": 35,
-}
-
+# ============================================================
+# HELPERS
+# ============================================================
 
 def format_money(value):
     try:
@@ -51,286 +36,1023 @@ def format_money(value):
         return str(value)
 
 
-def score_deal_value(value, max_value):
-    if max_value == 0:
-        return 0
-    return round((value / max_value) * 100, 1)
+def unique_values(dataframe, column):
+    if column not in dataframe.columns:
+        return []
 
-
-def score_partnership(row, max_deal_value):
-    region_score = REGION_SCORES.get(row["region"], 55)
-    industry_score = INDUSTRY_SCORES.get(row["industry"], 50)
-    overlap_score = OVERLAP_SCORES.get(str(row["market_overlap"]).lower(), 40)
-    relationship_score = RELATIONSHIP_SCORES.get(str(row["relationship_signal"]).lower(), 35)
-    deal_score = score_deal_value(row["deal_value_usd"], max_deal_value)
-
-    total = (
-        region_score * 0.20
-        + industry_score * 0.20
-        + overlap_score * 0.25
-        + relationship_score * 0.20
-        + deal_score * 0.15
+    return sorted(
+        dataframe[column]
+        .dropna()
+        .astype(str)
+        .str.strip()
+        .replace("", pd.NA)
+        .dropna()
+        .unique()
+        .tolist()
     )
-
-    return round(total, 1)
-
-
-def fit_tier(score):
-    if score >= 80:
-        return "Strategic Fit"
-    if score >= 60:
-        return "Potential Fit"
-    return "Low Fit"
-
-
-def priority_level(score):
-    if score >= 80:
-        return "High"
-    if score >= 60:
-        return "Medium"
-    return "Low"
-
-
-def strategic_fit(row):
-    return (
-        f"{row['company']} and {row['partner']} show a {row['fit_tier'].lower()} based on "
-        f"{row['industry']} alignment, {row['market_overlap']} market overlap and a "
-        f"{row['relationship_signal']} relationship signal."
-    )
-
-
-def expansion_potential(row):
-    if row["region"] in ["MENA", "LATAM", "AFRICA"]:
-        return (
-            f"This opportunity may support expansion across {row['region']}, especially through "
-            f"{row['partner_type'].lower()} collaboration and market access."
-        )
-    return (
-        f"This opportunity may support selective market expansion or commercial access in {row['region']}."
-    )
-
-
-def synergy_analysis(row):
-    return (
-        f"The partnership can create value by connecting {row['company']}'s commercial objective "
-        f"with {row['partner']}'s role as a {row['partner_type'].lower()}."
-    )
-
-
-def partnership_thesis(row):
-    return (
-        f"Partnership thesis: {row['company']} should explore collaboration with {row['partner']} to "
-        f"{str(row['strategic_goal']).lower()}, with potential opportunity value of "
-        f"{format_money(row['deal_value_usd'])}."
-    )
-
-
-def intro_strategy(row):
-    if row["priority_level"] == "High":
-        return "Prioritize executive introduction and propose a strategic discovery call."
-    if row["priority_level"] == "Medium":
-        return "Start with a targeted intro message and validate mutual priorities."
-    return "Keep in nurture and monitor for stronger timing or relationship signal."
-
-
-def ai_partnership_insight(row):
-    signals = []
-
-    if row["partnership_fit_score"] >= 80:
-        signals.append("strong strategic alignment")
-    if str(row["market_overlap"]).lower() == "high":
-        signals.append("high market overlap")
-    if str(row["relationship_signal"]).lower() == "hot":
-        signals.append("strong relationship momentum")
-    if row["region"] in ["MENA", "LATAM", "AFRICA"]:
-        signals.append("meaningful international expansion potential")
-
-    signal_text = ", ".join(signals) if signals else "moderate strategic alignment with selective commercial upside"
-
-    return (
-        f"This partnership shows {signal_text}. "
-        f"The recommended approach is to validate executive-level alignment, assess commercial synergies, "
-        f"and define a clear partnership motion around {str(row['strategic_goal']).lower()}."
-    )
-
-
-def next_best_action(row):
-    if row["priority_level"] == "High":
-        return "Schedule an executive discovery call and prepare a joint value hypothesis."
-    if row["priority_level"] == "Medium":
-        return "Send a targeted introduction and validate market timing, decision-makers and mutual priorities."
-    return "Keep the opportunity in nurture and monitor for improved timing, signal strength or market relevance."
 
 
 def render_card(title, content, icon="📌"):
     st.markdown(f"### {icon} {title}")
+
     st.markdown(
         f"""
-<div style="
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 18px;
-    background-color: #ffffff;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    white-space: pre-wrap;
-    line-height: 1.6;
-">{str(content).strip()}</div>
+        <div style="
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 18px;
+            background-color: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            white-space: pre-wrap;
+            line-height: 1.6;
+        ">
+            {str(content).strip()}
+        </div>
         """,
         unsafe_allow_html=True,
     )
 
 
-st.title("🤝 AI Partnership Opportunity Finder")
+def tier_to_outreach_tier(priority):
+    mapping = {
+        "High": "A",
+        "Medium": "B",
+        "Low": "C",
+    }
+
+    return mapping.get(
+        str(priority),
+        "C",
+    )
+
+
+def build_outreach_export(dataframe):
+    outreach = pd.DataFrame()
+
+    outreach["company_name"] = dataframe["partner"]
+    outreach["contact_name"] = dataframe.get(
+        "contact_name",
+        "",
+    )
+    outreach["country"] = dataframe["country"]
+    outreach["region"] = dataframe["region"]
+    outreach["industry"] = dataframe["industry"]
+
+    # Partnership datasets do not necessarily contain
+    # employee count. Keep the field for downstream compatibility.
+    outreach["company_size"] = ""
+
+    outreach["estimated_deal_value_usd"] = dataframe[
+        "deal_value_usd"
+    ]
+
+    outreach["engagement_signal"] = dataframe[
+        "relationship_signal"
+    ]
+
+    outreach["score"] = dataframe[
+        "partnership_fit_score"
+    ]
+
+    outreach["tier"] = dataframe[
+        "priority_level"
+    ].apply(
+        tier_to_outreach_tier
+    )
+
+    outreach["recommended_action"] = dataframe[
+        "recommended_action"
+    ]
+
+    outreach["score_rationale"] = dataframe[
+        "score_rationale"
+    ]
+
+    outreach["partner_type"] = dataframe[
+        "partner_type"
+    ]
+
+    outreach["partnership_archetype"] = dataframe[
+        "partnership_archetype"
+    ]
+
+    outreach["source_company"] = dataframe[
+        "company"
+    ]
+
+    outreach["strategic_goal"] = dataframe[
+        "strategic_goal"
+    ]
+
+    return outreach
+
+
+# ============================================================
+# HEADER
+# ============================================================
+
+st.title("🤝 Partnership Intelligence Platform")
+
 st.caption(
-    "Identify, score and prioritize strategic partnership opportunities for "
-    "Business Development, Partnerships, GTM and International Expansion teams."
+    "Configurable Partnership Scoring · Strategic Fit · "
+    "Market Access · Partnership Archetypes · "
+    "Commercial Prioritization · Outreach Handoff"
 )
 
-uploaded = st.file_uploader("Upload Partnerships CSV", type=["csv"])
+st.markdown(
+    """
+A practical Commercial Intelligence application designed to help
+**Business Development, Partnerships, GTM and International Expansion teams**
+identify, evaluate and prioritize strategic partnership opportunities.
+
+The platform uses a deterministic and explainable scoring engine.
+
+**The score is produced by structured commercial rules — not by AI.**
+"""
+)
+
+st.info(
+    "PARTNER stage of the Commercial Intelligence ecosystem: "
+    "IDENTIFY → PRIORITIZE → ENGAGE → PARTNER → EXPAND"
+)
+
+
+# ============================================================
+# DATA INPUT
+# ============================================================
+
+st.subheader("📂 Partnership Pipeline")
+
+uploaded = st.file_uploader(
+    "Upload Partnerships CSV",
+    type=["csv"],
+)
 
 if uploaded is not None:
-    df = pd.read_csv(uploaded)
+
+    try:
+        source_df = pd.read_csv(
+            uploaded
+        )
+
+        st.success(
+            f"Loaded {len(source_df)} partnership opportunities."
+        )
+
+    except Exception as exc:
+
+        st.error(
+            f"Unable to read the uploaded CSV: {exc}"
+        )
+
+        st.stop()
+
 else:
-    df = pd.read_csv("data/sample_partnerships.csv")
 
-required_columns = [
-    "company",
-    "partner",
-    "country",
+    try:
+        source_df = pd.read_csv(
+            "data/sample_partnerships.csv"
+        )
+
+        st.caption(
+            "Using the demonstration partnership dataset."
+        )
+
+    except Exception as exc:
+
+        st.error(
+            "No uploaded CSV was provided and the sample dataset "
+            f"could not be loaded: {exc}"
+        )
+
+        st.stop()
+
+
+# ============================================================
+# CONFIGURATION OPTIONS
+# ============================================================
+
+available_regions = unique_values(
+    source_df,
     "region",
+)
+
+available_industries = unique_values(
+    source_df,
     "industry",
+)
+
+available_partner_types = unique_values(
+    source_df,
     "partner_type",
-    "strategic_goal",
-    "market_overlap",
-    "deal_value_usd",
-    "relationship_signal",
-]
+)
 
-missing_columns = [col for col in required_columns if col not in df.columns]
 
-if missing_columns:
-    st.error("Missing columns in CSV: " + ", ".join(missing_columns))
+# ============================================================
+# SIDEBAR — PARTNERSHIP MODEL
+# ============================================================
+
+with st.sidebar:
+
+    st.header(
+        "⚙️ Partnership Model"
+    )
+
+    st.caption(
+        "Configure the commercial logic used to evaluate "
+        "and prioritize partnership opportunities."
+    )
+
+    st.divider()
+
+    st.subheader(
+        "Strategic Preferences"
+    )
+
+    preferred_regions = st.multiselect(
+        "Priority Regions",
+        options=available_regions,
+        default=[],
+        help=(
+            "Selected regions receive the strongest "
+            "Region Fit score."
+        ),
+    )
+
+    preferred_industries = st.multiselect(
+        "Priority Industries",
+        options=available_industries,
+        default=[],
+        help=(
+            "Selected industries receive the strongest "
+            "Industry Alignment score."
+        ),
+    )
+
+    preferred_partner_types = st.multiselect(
+        "Priority Partner Types",
+        options=available_partner_types,
+        default=[],
+        help=(
+            "Selected partner types receive the strongest "
+            "Partner Type Fit score."
+        ),
+    )
+
+    st.divider()
+
+    st.subheader(
+        "Commercial Value"
+    )
+
+    deal_value_target_usd = st.number_input(
+        "Target Partnership Value (USD)",
+        min_value=1_000,
+        value=int(
+            DEFAULT_CONFIG[
+                "deal_value_target_usd"
+            ]
+        ),
+        step=25_000,
+        help=(
+            "Opportunities reaching this value receive "
+            "the maximum Opportunity Value score."
+        ),
+    )
+
+    st.divider()
+
+    st.subheader(
+        "Scoring Priorities"
+    )
+
+    region_weight = st.slider(
+        "Region Fit",
+        min_value=0,
+        max_value=40,
+        value=int(
+            DEFAULT_CONFIG["weights"][
+                "region_fit"
+            ]
+            * 100
+        ),
+        step=5,
+    )
+
+    industry_weight = st.slider(
+        "Industry Alignment",
+        min_value=0,
+        max_value=40,
+        value=int(
+            DEFAULT_CONFIG["weights"][
+                "industry_alignment"
+            ]
+            * 100
+        ),
+        step=5,
+    )
+
+    market_access_weight = st.slider(
+        "Market Access",
+        min_value=0,
+        max_value=40,
+        value=int(
+            DEFAULT_CONFIG["weights"][
+                "market_access"
+            ]
+            * 100
+        ),
+        step=5,
+    )
+
+    relationship_weight = st.slider(
+        "Relationship Strength",
+        min_value=0,
+        max_value=40,
+        value=int(
+            DEFAULT_CONFIG["weights"][
+                "relationship_strength"
+            ]
+            * 100
+        ),
+        step=5,
+    )
+
+    value_weight = st.slider(
+        "Opportunity Value",
+        min_value=0,
+        max_value=40,
+        value=int(
+            DEFAULT_CONFIG["weights"][
+                "opportunity_value"
+            ]
+            * 100
+        ),
+        step=5,
+    )
+
+    partner_type_weight = st.slider(
+        "Partner Type Fit",
+        min_value=0,
+        max_value=40,
+        value=int(
+            DEFAULT_CONFIG["weights"][
+                "partner_type_fit"
+            ]
+            * 100
+        ),
+        step=5,
+    )
+
+    execution_weight = st.slider(
+        "Execution Feasibility",
+        min_value=0,
+        max_value=40,
+        value=int(
+            DEFAULT_CONFIG["weights"][
+                "execution_feasibility"
+            ]
+            * 100
+        ),
+        step=5,
+    )
+
+    raw_weight_total = (
+        region_weight
+        + industry_weight
+        + market_access_weight
+        + relationship_weight
+        + value_weight
+        + partner_type_weight
+        + execution_weight
+    )
+
+    st.caption(
+        f"Current raw weighting total: {raw_weight_total}%"
+    )
+
+    st.caption(
+        "Weights are automatically normalized to 100% "
+        "by the scoring engine."
+    )
+
+    st.divider()
+
+    st.subheader(
+        "Fit Thresholds"
+    )
+
+    strategic_fit_threshold = st.number_input(
+        "Strategic Fit",
+        min_value=1,
+        max_value=100,
+        value=int(
+            DEFAULT_CONFIG[
+                "tier_thresholds"
+            ][
+                "strategic_fit"
+            ]
+        ),
+    )
+
+    promising_fit_threshold = st.number_input(
+        "Promising Fit",
+        min_value=1,
+        max_value=99,
+        value=int(
+            DEFAULT_CONFIG[
+                "tier_thresholds"
+            ][
+                "promising_fit"
+            ]
+        ),
+    )
+
+    exploratory_fit_threshold = st.number_input(
+        "Exploratory Fit",
+        min_value=1,
+        max_value=98,
+        value=int(
+            DEFAULT_CONFIG[
+                "tier_thresholds"
+            ][
+                "exploratory_fit"
+            ]
+        ),
+    )
+
+
+# ============================================================
+# BUILD ACTIVE CONFIGURATION
+# ============================================================
+
+weights = {
+    "region_fit": (
+        region_weight
+        / 100
+    ),
+    "industry_alignment": (
+        industry_weight
+        / 100
+    ),
+    "market_access": (
+        market_access_weight
+        / 100
+    ),
+    "relationship_strength": (
+        relationship_weight
+        / 100
+    ),
+    "opportunity_value": (
+        value_weight
+        / 100
+    ),
+    "partner_type_fit": (
+        partner_type_weight
+        / 100
+    ),
+    "execution_feasibility": (
+        execution_weight
+        / 100
+    ),
+}
+
+
+try:
+
+    active_config = build_runtime_config(
+        preferred_regions=preferred_regions,
+        preferred_industries=preferred_industries,
+        preferred_partner_types=preferred_partner_types,
+        weights=weights,
+        deal_value_target_usd=deal_value_target_usd,
+        strategic_fit_threshold=strategic_fit_threshold,
+        promising_fit_threshold=promising_fit_threshold,
+        exploratory_fit_threshold=exploratory_fit_threshold,
+    )
+
+except ValueError as exc:
+
+    st.error(
+        str(exc)
+    )
+
     st.stop()
 
-df["deal_value_usd"] = pd.to_numeric(df["deal_value_usd"], errors="coerce").fillna(0)
 
-max_deal_value = df["deal_value_usd"].max()
+# ============================================================
+# RUN PARTNERSHIP INTELLIGENCE ENGINE
+# ============================================================
 
-df["partnership_fit_score"] = df.apply(lambda row: score_partnership(row, max_deal_value), axis=1)
-df["fit_tier"] = df["partnership_fit_score"].apply(fit_tier)
-df["priority_level"] = df["partnership_fit_score"].apply(priority_level)
+try:
 
-df["strategic_fit"] = df.apply(strategic_fit, axis=1)
-df["expansion_potential"] = df.apply(expansion_potential, axis=1)
-df["synergy_analysis"] = df.apply(synergy_analysis, axis=1)
-df["partnership_thesis"] = df.apply(partnership_thesis, axis=1)
-df["recommended_intro_strategy"] = df.apply(intro_strategy, axis=1)
-df["ai_partnership_insight"] = df.apply(ai_partnership_insight, axis=1)
-df["next_best_action"] = df.apply(next_best_action, axis=1)
+    df = rank_partnerships(
+        source_df,
+        config=active_config,
+    )
 
-df = df.sort_values("partnership_fit_score", ascending=False).reset_index(drop=True)
+except ValueError as exc:
 
-st.subheader("📊 Executive Partnership Summary")
+    st.error(
+        str(exc)
+    )
 
-col1, col2, col3, col4 = st.columns(4)
+    st.stop()
 
-col1.metric("Total Opportunities", len(df))
-col2.metric("Pipeline Value", f"${df['deal_value_usd'].sum():,.0f}")
-col3.metric("Avg Fit Score", round(df["partnership_fit_score"].mean(), 1))
-col4.metric("High Priority", len(df[df["priority_level"] == "High"]))
+except Exception as exc:
+
+    st.error(
+        f"Unable to evaluate partnership pipeline: {exc}"
+    )
+
+    st.stop()
+
+
+if df.empty:
+
+    st.warning(
+        "No partnership opportunities are available for analysis."
+    )
+
+    st.stop()
+
+
+# ============================================================
+# ACTIVE MODEL
+# ============================================================
+
+with st.expander(
+    "🧠 Active Partnership Intelligence Model"
+):
+
+    weights_df = pd.DataFrame(
+        [
+            {
+                "Dimension": "Region Fit",
+                "Weight": (
+                    active_config[
+                        "weights"
+                    ][
+                        "region_fit"
+                    ]
+                    * 100
+                ),
+            },
+            {
+                "Dimension": "Industry Alignment",
+                "Weight": (
+                    active_config[
+                        "weights"
+                    ][
+                        "industry_alignment"
+                    ]
+                    * 100
+                ),
+            },
+            {
+                "Dimension": "Market Access",
+                "Weight": (
+                    active_config[
+                        "weights"
+                    ][
+                        "market_access"
+                    ]
+                    * 100
+                ),
+            },
+            {
+                "Dimension": "Relationship Strength",
+                "Weight": (
+                    active_config[
+                        "weights"
+                    ][
+                        "relationship_strength"
+                    ]
+                    * 100
+                ),
+            },
+            {
+                "Dimension": "Opportunity Value",
+                "Weight": (
+                    active_config[
+                        "weights"
+                    ][
+                        "opportunity_value"
+                    ]
+                    * 100
+                ),
+            },
+            {
+                "Dimension": "Partner Type Fit",
+                "Weight": (
+                    active_config[
+                        "weights"
+                    ][
+                        "partner_type_fit"
+                    ]
+                    * 100
+                ),
+            },
+            {
+                "Dimension": "Execution Feasibility",
+                "Weight": (
+                    active_config[
+                        "weights"
+                    ][
+                        "execution_feasibility"
+                    ]
+                    * 100
+                ),
+            },
+        ]
+    )
+
+    weights_df["Weight"] = weights_df[
+        "Weight"
+    ].round(
+        1
+    )
+
+    st.dataframe(
+        weights_df,
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    model_col_1, model_col_2, model_col_3 = st.columns(
+        3
+    )
+
+    with model_col_1:
+
+        st.write(
+            "**Priority Regions:** "
+            + (
+                ", ".join(
+                    preferred_regions
+                )
+                if preferred_regions
+                else "Default model"
+            )
+        )
+
+    with model_col_2:
+
+        st.write(
+            "**Priority Industries:** "
+            + (
+                ", ".join(
+                    preferred_industries
+                )
+                if preferred_industries
+                else "Default model"
+            )
+        )
+
+    with model_col_3:
+
+        st.write(
+            "**Priority Partner Types:** "
+            + (
+                ", ".join(
+                    preferred_partner_types
+                )
+                if preferred_partner_types
+                else "Default model"
+            )
+        )
+
+    st.write(
+        f"**Target Partnership Value:** "
+        f"{format_money(deal_value_target_usd)}"
+    )
+
+    st.write(
+        "**Fit Thresholds:** "
+        f"Strategic {strategic_fit_threshold}+ · "
+        f"Promising {promising_fit_threshold}+ · "
+        f"Exploratory {exploratory_fit_threshold}+"
+    )
+
+
+# ============================================================
+# EXECUTIVE SUMMARY
+# ============================================================
 
 st.divider()
 
-st.subheader("👔 Executive Partnership Dashboard")
-
-top_fit = df.iloc[0]
-top_revenue = df.sort_values("deal_value_usd", ascending=False).iloc[0]
-top_expansion = df[df["region"].isin(["MENA", "LATAM", "AFRICA"])].sort_values(
-    "partnership_fit_score", ascending=False
+st.subheader(
+    "📊 Executive Partnership Summary"
 )
 
-if len(top_expansion) > 0:
-    top_expansion_row = top_expansion.iloc[0]
-else:
-    top_expansion_row = top_fit
+total_pipeline_value = df[
+    "deal_value_usd"
+].sum()
 
-dash_col_1, dash_col_2, dash_col_3 = st.columns(3)
+average_score = df[
+    "partnership_fit_score"
+].mean()
+
+high_priority_count = len(
+    df[
+        df[
+            "priority_level"
+        ]
+        == "High"
+    ]
+)
+
+strategic_fit_count = len(
+    df[
+        df[
+            "fit_tier"
+        ]
+        == "Strategic Fit"
+    ]
+)
+
+summary_col_1, summary_col_2, summary_col_3, summary_col_4, summary_col_5 = st.columns(
+    5
+)
+
+summary_col_1.metric(
+    "Opportunities",
+    len(df),
+)
+
+summary_col_2.metric(
+    "Pipeline Value",
+    format_money(
+        total_pipeline_value
+    ),
+)
+
+summary_col_3.metric(
+    "Avg Partnership Score",
+    round(
+        average_score,
+        1,
+    ),
+)
+
+summary_col_4.metric(
+    "Strategic Fit",
+    strategic_fit_count,
+)
+
+summary_col_5.metric(
+    "High Priority",
+    high_priority_count,
+)
+
+
+# ============================================================
+# EXECUTIVE DASHBOARD
+# ============================================================
+
+st.divider()
+
+st.subheader(
+    "👔 Executive Partnership Dashboard"
+)
+
+top_fit = df.iloc[
+    0
+]
+
+top_revenue = df.sort_values(
+    "deal_value_usd",
+    ascending=False,
+).iloc[
+    0
+]
+
+hot_relationships = df[
+    df[
+        "relationship_signal"
+    ].astype(
+        str
+    ).str.lower()
+    == "hot"
+]
+
+if not hot_relationships.empty:
+
+    top_relationship = hot_relationships.sort_values(
+        "partnership_fit_score",
+        ascending=False,
+    ).iloc[
+        0
+    ]
+
+else:
+
+    top_relationship = top_fit
+
+
+market_access_df = df[
+    df[
+        "market_overlap"
+    ].astype(
+        str
+    ).str.lower()
+    == "high"
+]
+
+if not market_access_df.empty:
+
+    top_market_access = market_access_df.sort_values(
+        "partnership_fit_score",
+        ascending=False,
+    ).iloc[
+        0
+    ]
+
+else:
+
+    top_market_access = top_fit
+
+
+dash_col_1, dash_col_2 = st.columns(
+    2
+)
 
 with dash_col_1:
-    st.metric(
+
+    render_card(
         "Top Strategic Fit",
-        f"{top_fit['company']} + {top_fit['partner']}",
-        f"Score {top_fit['partnership_fit_score']}",
+        (
+            f"{top_fit['company']} + {top_fit['partner']}\n\n"
+            f"Score: {top_fit['partnership_fit_score']}\n"
+            f"Tier: {top_fit['fit_tier']}\n"
+            f"Archetype: {top_fit['partnership_archetype']}"
+        ),
+        "🏆",
     )
-    st.metric(
-        "Top Revenue Opportunity",
-        f"{top_revenue['company']} + {top_revenue['partner']}",
-        format_money(top_revenue["deal_value_usd"]),
+
+    render_card(
+        "Top Relationship Opportunity",
+        (
+            f"{top_relationship['company']} + "
+            f"{top_relationship['partner']}\n\n"
+            f"Relationship Signal: "
+            f"{top_relationship['relationship_signal']}\n"
+            f"Score: "
+            f"{top_relationship['partnership_fit_score']}"
+        ),
+        "🤝",
     )
+
 
 with dash_col_2:
-    st.metric(
-        "Top Expansion Opportunity",
-        f"{top_expansion_row['company']} + {top_expansion_row['partner']}",
-        top_expansion_row["region"],
-    )
-    st.metric("Strategic Fit Opportunities", len(df[df["fit_tier"] == "Strategic Fit"]))
 
-with dash_col_3:
-    st.metric(
-        "Hot Relationship Signals",
-        len(df[df["relationship_signal"].astype(str).str.lower() == "hot"]),
-    )
-    st.metric(
-        "High Market Overlap",
-        len(df[df["market_overlap"].astype(str).str.lower() == "high"]),
+    render_card(
+        "Top Revenue Opportunity",
+        (
+            f"{top_revenue['company']} + "
+            f"{top_revenue['partner']}\n\n"
+            f"Estimated Value: "
+            f"{format_money(top_revenue['deal_value_usd'])}\n"
+            f"Score: "
+            f"{top_revenue['partnership_fit_score']}"
+        ),
+        "💰",
     )
 
-st.markdown("#### Executive Interpretation")
-st.write(
-    f"The strongest partnership opportunity is **{top_fit['company']} + {top_fit['partner']}**, "
-    f"with a fit score of **{top_fit['partnership_fit_score']}**."
+    render_card(
+        "Top Market Access Opportunity",
+        (
+            f"{top_market_access['company']} + "
+            f"{top_market_access['partner']}\n\n"
+            f"Region: {top_market_access['region']}\n"
+            f"Partner Type: "
+            f"{top_market_access['partner_type']}\n"
+            f"Score: "
+            f"{top_market_access['partnership_fit_score']}"
+        ),
+        "🌍",
+    )
+
+
+# ============================================================
+# EXECUTIVE INTERPRETATION
+# ============================================================
+
+st.markdown(
+    "### Executive Interpretation"
 )
+
 st.write(
-    f"The largest revenue opportunity is **{top_revenue['company']} + {top_revenue['partner']}**, "
-    f"with an estimated value of **{format_money(top_revenue['deal_value_usd'])}**."
+    f"The highest-ranked partnership opportunity is "
+    f"**{top_fit['company']} + {top_fit['partner']}**, "
+    f"with a Partnership Intelligence score of "
+    f"**{top_fit['partnership_fit_score']}** and classification "
+    f"**{top_fit['fit_tier']}**."
 )
+
+st.write(
+    f"The opportunity is currently classified as a "
+    f"**{top_fit['partnership_archetype']}**."
+)
+
+st.write(
+    f"Recommended next action: "
+    f"**{top_fit['recommended_action']}**"
+)
+
+
+# ============================================================
+# OPPORTUNITY MAP
+# ============================================================
 
 st.divider()
 
-st.subheader("🔥 Opportunity Heatmap")
+st.subheader(
+    "🔥 Partnership Opportunity Map"
+)
+
+chart_df = df.copy()
+
+chart_df[
+    "_bubble_size"
+] = chart_df[
+    "deal_value_usd"
+].clip(
+    lower=1
+)
 
 heatmap_fig = px.scatter(
-    df,
+    chart_df,
     x="deal_value_usd",
     y="partnership_fit_score",
-    size="deal_value_usd",
+    size="_bubble_size",
     color="priority_level",
     hover_name="partner",
-    hover_data=["company", "region", "industry", "partner_type"],
+    hover_data=[
+        "company",
+        "region",
+        "industry",
+        "partner_type",
+        "partnership_archetype",
+        "fit_tier",
+    ],
     labels={
-        "deal_value_usd": "Deal Value USD",
-        "partnership_fit_score": "Partnership Fit Score",
-        "priority_level": "Priority Level",
+        "deal_value_usd": "Estimated Partnership Value USD",
+        "partnership_fit_score": "Partnership Intelligence Score",
+        "priority_level": "Priority",
     },
-    title="Partnership Fit vs Deal Value",
+    title="Partnership Score vs Commercial Value",
 )
 
-st.plotly_chart(heatmap_fig, use_container_width=True, config=PLOTLY_CONFIG)
+st.plotly_chart(
+    heatmap_fig,
+    use_container_width=True,
+    config=PLOTLY_CONFIG,
+)
+
+
+# ============================================================
+# REGIONAL INTELLIGENCE
+# ============================================================
 
 st.divider()
 
-st.subheader("🌍 Regional Expansion Dashboard")
+st.subheader(
+    "🌍 Regional Partnership Intelligence"
+)
 
 regional_df = (
-    df.groupby("region", as_index=False)
-    .agg(
-        total_pipeline_value=("deal_value_usd", "sum"),
-        avg_fit_score=("partnership_fit_score", "mean"),
-        opportunities=("company", "count"),
+    df.groupby(
+        "region",
+        as_index=False,
     )
-    .sort_values("total_pipeline_value", ascending=False)
+    .agg(
+        total_pipeline_value=(
+            "deal_value_usd",
+            "sum",
+        ),
+        avg_fit_score=(
+            "partnership_fit_score",
+            "mean",
+        ),
+        opportunities=(
+            "partner",
+            "count",
+        ),
+    )
+    .sort_values(
+        "total_pipeline_value",
+        ascending=False,
+    )
+)
+
+regional_df[
+    "avg_fit_score"
+] = regional_df[
+    "avg_fit_score"
+].round(
+    1
 )
 
 regional_fig = px.bar(
@@ -338,62 +1060,158 @@ regional_fig = px.bar(
     x="region",
     y="total_pipeline_value",
     text="total_pipeline_value",
-    hover_data=["avg_fit_score", "opportunities"],
+    hover_data=[
+        "avg_fit_score",
+        "opportunities",
+    ],
     labels={
         "region": "Region",
-        "total_pipeline_value": "Total Pipeline Value",
-        "avg_fit_score": "Average Fit Score",
+        "total_pipeline_value": "Partnership Pipeline Value",
+        "avg_fit_score": "Average Partnership Score",
         "opportunities": "Opportunities",
     },
-    title="Pipeline Value by Region",
+    title="Partnership Pipeline Value by Region",
 )
 
-st.plotly_chart(regional_fig, use_container_width=True, config=PLOTLY_CONFIG)
+st.plotly_chart(
+    regional_fig,
+    use_container_width=True,
+    config=PLOTLY_CONFIG,
+)
+
+
+# ============================================================
+# PARTNERSHIP ARCHETYPES
+# ============================================================
 
 st.divider()
 
-st.subheader("🤝 Partner Portfolio Analysis")
+st.subheader(
+    "🧭 Partnership Archetype Analysis"
+)
 
-partner_type_df = (
-    df.groupby("partner_type", as_index=False)
-    .agg(
-        opportunities=("company", "count"),
-        pipeline_value=("deal_value_usd", "sum"),
+archetype_df = (
+    df.groupby(
+        "partnership_archetype",
+        as_index=False,
     )
-    .sort_values("pipeline_value", ascending=False)
+    .agg(
+        opportunities=(
+            "partner",
+            "count",
+        ),
+        pipeline_value=(
+            "deal_value_usd",
+            "sum",
+        ),
+        average_score=(
+            "partnership_fit_score",
+            "mean",
+        ),
+    )
+    .sort_values(
+        "pipeline_value",
+        ascending=False,
+    )
 )
 
-portfolio_fig = px.pie(
-    partner_type_df,
-    names="partner_type",
-    values="pipeline_value",
-    title="Pipeline Value by Partner Type",
+archetype_df[
+    "average_score"
+] = archetype_df[
+    "average_score"
+].round(
+    1
 )
 
-st.plotly_chart(portfolio_fig, use_container_width=True, config=PLOTLY_CONFIG)
+archetype_col_1, archetype_col_2 = st.columns(
+    2
+)
+
+with archetype_col_1:
+
+    archetype_fig = px.pie(
+        archetype_df,
+        names="partnership_archetype",
+        values="pipeline_value",
+        title="Pipeline Value by Partnership Archetype",
+    )
+
+    st.plotly_chart(
+        archetype_fig,
+        use_container_width=True,
+        config=PLOTLY_CONFIG,
+    )
+
+
+with archetype_col_2:
+
+    st.dataframe(
+        archetype_df.rename(
+            columns={
+                "partnership_archetype": "Archetype",
+                "opportunities": "Opportunities",
+                "pipeline_value": "Pipeline Value",
+                "average_score": "Average Score",
+            }
+        ),
+        use_container_width=True,
+        hide_index=True,
+    )
+
+
+# ============================================================
+# EXECUTIVE RECOMMENDATION CENTER
+# ============================================================
 
 st.divider()
 
-st.subheader("🏆 Executive Recommendation Center")
+st.subheader(
+    "🏆 Executive Recommendation Center"
+)
 
-top_3 = df.head(3)
+top_recommendations = df.head(
+    min(
+        5,
+        len(df),
+    )
+)
 
-for index, row in top_3.iterrows():
+for index, row in top_recommendations.iterrows():
+
     render_card(
-        f"#{index + 1} {row['company']} + {row['partner']}",
+        f"#{index + 1} "
+        f"{row['company']} + "
+        f"{row['partner']}",
         (
-            f"Score: {row['partnership_fit_score']}\n"
-            f"Priority: {row['priority_level']}\n"
-            f"Value: {format_money(row['deal_value_usd'])}\n\n"
-            f"{row['ai_partnership_insight']}\n\n"
-            f"Next Best Action: {row['next_best_action']}"
+            f"Partnership Score: "
+            f"{row['partnership_fit_score']}\n"
+            f"Fit Tier: "
+            f"{row['fit_tier']}\n"
+            f"Priority: "
+            f"{row['priority_level']}\n"
+            f"Archetype: "
+            f"{row['partnership_archetype']}\n"
+            f"Estimated Value: "
+            f"{format_money(row['deal_value_usd'])}\n\n"
+            f"{row['strategic_interpretation']}\n\n"
+            f"Recommended Model: "
+            f"{row['recommended_partnership_model']}\n\n"
+            f"Next Best Action: "
+            f"{row['recommended_action']}"
         ),
         "🏆",
     )
 
+
+# ============================================================
+# PRIORITIZATION ENGINE
+# ============================================================
+
 st.divider()
 
-st.subheader("🎯 Partnership Prioritization Engine")
+st.subheader(
+    "🎯 Partnership Prioritization Engine"
+)
 
 display_columns = [
     "company",
@@ -402,80 +1220,468 @@ display_columns = [
     "region",
     "industry",
     "partner_type",
+    "partnership_archetype",
     "deal_value_usd",
     "market_overlap",
     "relationship_signal",
+    "execution_complexity",
     "partnership_fit_score",
     "fit_tier",
     "priority_level",
-    "recommended_intro_strategy",
-    "next_best_action",
+    "recommended_action",
 ]
 
-st.dataframe(df[display_columns], width="stretch")
+available_display_columns = [
+    column
+    for column in display_columns
+    if column in df.columns
+]
 
-csv = df.to_csv(index=False).encode("utf-8")
+st.dataframe(
+    df[
+        available_display_columns
+    ],
+    use_container_width=True,
+    hide_index=True,
+)
+
+
+# ============================================================
+# FULL PARTNERSHIP EXPORT
+# ============================================================
+
+export_columns = [
+    "company",
+    "partner",
+    "contact_name",
+    "country",
+    "region",
+    "industry",
+    "partner_type",
+    "strategic_goal",
+    "market_overlap",
+    "deal_value_usd",
+    "relationship_signal",
+    "execution_complexity",
+    "partnership_fit_score",
+    "fit_tier",
+    "priority_level",
+    "partnership_archetype",
+    "recommended_partnership_model",
+    "recommended_action",
+    "strategic_interpretation",
+    "expansion_potential",
+    "partnership_thesis",
+    "score_rationale",
+    "outreach_handoff_context",
+]
+
+available_export_columns = [
+    column
+    for column in export_columns
+    if column in df.columns
+]
+
+full_export_df = df[
+    available_export_columns
+].copy()
+
+full_csv = full_export_df.to_csv(
+    index=False
+).encode(
+    "utf-8"
+)
 
 st.download_button(
-    "⬇ Download Partnership Opportunities CSV",
-    csv,
-    "partnership_opportunities_ranked.csv",
-    "text/csv",
+    "⬇ Download Ranked Partnership Pipeline",
+    full_csv,
+    file_name="partnership_intelligence_ranked.csv",
+    mime="text/csv",
 )
 
-os.makedirs("exports", exist_ok=True)
-df.to_csv("exports/partnership_opportunities_ranked.csv", index=False)
+
+# ============================================================
+# OUTREACH HANDOFF
+# ============================================================
 
 st.divider()
 
-st.subheader("🧩 Partnership Intelligence Workspace")
-
-selected_option = st.selectbox(
-    "Select a partnership opportunity",
-    [f"{row['company']} + {row['partner']}" for _, row in df.iterrows()],
+st.subheader(
+    "🔗 Adaptive Outreach Intelligence Handoff"
 )
 
-selected_row = df[(df["company"] + " + " + df["partner"]) == selected_option].iloc[0]
+st.write(
+    "Partnership opportunities can be exported in a format designed "
+    "for downstream commercial engagement."
+)
 
-profile_col_1, profile_col_2, profile_col_3 = st.columns(3)
+st.markdown(
+    """
+```text
+PARTNERSHIP INTELLIGENCE
+        ↓
+Partnership Score
+        ↓
+Priority
+        ↓
+Recommended Action
+        ↓
+OUTREACH HANDOFF
+        ↓
+Adaptive Cadence
+        ↓
+Channel Strategy
+        ↓
+Commercial Message
+```
+"""
+)
+
+outreach_df = build_outreach_export(
+    df
+)
+
+outreach_csv = outreach_df.to_csv(
+    index=False
+).encode(
+    "utf-8"
+)
+
+st.download_button(
+    "📨 Export for Adaptive Outreach Intelligence",
+    outreach_csv,
+    file_name="partnership_outreach_handoff.csv",
+    mime="text/csv",
+)
+
+with st.expander(
+    "Preview Outreach Handoff"
+):
+
+    st.dataframe(
+        outreach_df,
+        use_container_width=True,
+        hide_index=True,
+    )
+
+
+# ============================================================
+# PARTNERSHIP INTELLIGENCE WORKSPACE
+# ============================================================
+
+st.divider()
+
+st.subheader(
+    "🧩 Partnership Intelligence Workspace"
+)
+
+selection_map = {}
+
+for index, row in df.iterrows():
+
+    label = (
+        f"{index + 1}. "
+        f"{row['company']} + "
+        f"{row['partner']}"
+    )
+
+    selection_map[
+        label
+    ] = index
+
+
+selected_label = st.selectbox(
+    "Select a partnership opportunity",
+    list(
+        selection_map.keys()
+    ),
+)
+
+selected_index = selection_map[
+    selected_label
+]
+
+selected_row = df.loc[
+    selected_index
+]
+
+
+# ============================================================
+# SELECTED OPPORTUNITY — PROFILE
+# ============================================================
+
+profile_col_1, profile_col_2, profile_col_3, profile_col_4 = st.columns(
+    4
+)
 
 with profile_col_1:
-    st.markdown("#### 🏢 Company Profile")
-    st.write(f"**Company:** {selected_row['company']}")
-    st.write(f"**Partner:** {selected_row['partner']}")
-    st.write(f"**Country:** {selected_row['country']}")
-    st.write(f"**Region:** {selected_row['region']}")
+
+    st.markdown(
+        "#### 🏢 Company"
+    )
+
+    st.write(
+        f"**Company:** "
+        f"{selected_row['company']}"
+    )
+
+    st.write(
+        f"**Partner:** "
+        f"{selected_row['partner']}"
+    )
+
+    st.write(
+        f"**Country:** "
+        f"{selected_row['country']}"
+    )
+
+    st.write(
+        f"**Region:** "
+        f"{selected_row['region']}"
+    )
+
 
 with profile_col_2:
-    st.markdown("#### 💼 Partnership Context")
-    st.write(f"**Industry:** {selected_row['industry']}")
-    st.write(f"**Partner Type:** {selected_row['partner_type']}")
-    st.write(f"**Strategic Goal:** {selected_row['strategic_goal']}")
-    st.write(f"**Deal Value:** {format_money(selected_row['deal_value_usd'])}")
+
+    st.markdown(
+        "#### 💼 Partnership Context"
+    )
+
+    st.write(
+        f"**Industry:** "
+        f"{selected_row['industry']}"
+    )
+
+    st.write(
+        f"**Partner Type:** "
+        f"{selected_row['partner_type']}"
+    )
+
+    st.write(
+        f"**Strategic Goal:** "
+        f"{selected_row['strategic_goal']}"
+    )
+
+    st.write(
+        f"**Value:** "
+        f"{format_money(selected_row['deal_value_usd'])}"
+    )
+
 
 with profile_col_3:
-    st.markdown("#### 🚀 Fit Assessment")
-    st.write(f"**Fit Score:** {selected_row['partnership_fit_score']}")
-    st.write(f"**Fit Tier:** {selected_row['fit_tier']}")
-    st.write(f"**Priority:** {selected_row['priority_level']}")
-    st.write(f"**Relationship Signal:** {selected_row['relationship_signal']}")
+
+    st.markdown(
+        "#### 🎯 Fit Assessment"
+    )
+
+    st.write(
+        f"**Score:** "
+        f"{selected_row['partnership_fit_score']}"
+    )
+
+    st.write(
+        f"**Fit Tier:** "
+        f"{selected_row['fit_tier']}"
+    )
+
+    st.write(
+        f"**Priority:** "
+        f"{selected_row['priority_level']}"
+    )
+
+    st.write(
+        f"**Relationship:** "
+        f"{selected_row['relationship_signal']}"
+    )
+
+
+with profile_col_4:
+
+    st.markdown(
+        "#### 🧭 Partnership Model"
+    )
+
+    st.write(
+        f"**Archetype:** "
+        f"{selected_row['partnership_archetype']}"
+    )
+
+    st.write(
+        f"**Market Overlap:** "
+        f"{selected_row['market_overlap']}"
+    )
+
+    st.write(
+        f"**Execution Complexity:** "
+        f"{selected_row['execution_complexity']}"
+    )
+
+
+# ============================================================
+# SCORE EXPLAINABILITY
+# ============================================================
 
 st.divider()
 
-intelligence_col_1, intelligence_col_2 = st.columns(2)
+st.markdown(
+    "### 🔎 Explainable Partnership Score"
+)
+
+score_breakdown = selected_row[
+    "score_breakdown"
+]
+
+component_labels = {
+    "region_fit": "Region Fit",
+    "industry_alignment": "Industry Alignment",
+    "market_access": "Market Access",
+    "relationship_strength": "Relationship Strength",
+    "opportunity_value": "Opportunity Value",
+    "partner_type_fit": "Partner Type Fit",
+    "execution_feasibility": "Execution Feasibility",
+}
+
+breakdown_rows = []
+
+for component, raw_score in score_breakdown[
+    "raw_scores"
+].items():
+
+    weight = score_breakdown[
+        "weights"
+    ][
+        component
+    ]
+
+    contribution = score_breakdown[
+        "weighted_contributions"
+    ][
+        component
+    ]
+
+    breakdown_rows.append(
+        {
+            "Component": component_labels.get(
+                component,
+                component,
+            ),
+            "Raw Score": round(
+                raw_score,
+                1,
+            ),
+            "Weight": f"{weight * 100:.1f}%",
+            "Weighted Contribution": round(
+                contribution,
+                2,
+            ),
+        }
+    )
+
+
+breakdown_df = pd.DataFrame(
+    breakdown_rows
+)
+
+st.dataframe(
+    breakdown_df,
+    use_container_width=True,
+    hide_index=True,
+)
+
+st.markdown(
+    f"### Final Partnership Intelligence Score: "
+    f"**{selected_row['partnership_fit_score']} / 100**"
+)
+
+with st.expander(
+    "Full Score Rationale"
+):
+
+    st.write(
+        selected_row[
+            "score_rationale"
+        ]
+    )
+
+
+# ============================================================
+# INTELLIGENCE CARDS
+# ============================================================
+
+st.divider()
+
+intelligence_col_1, intelligence_col_2 = st.columns(
+    2
+)
 
 with intelligence_col_1:
-    render_card("Strategic Fit", selected_row["strategic_fit"], "🎯")
-    render_card("Synergy Analysis", selected_row["synergy_analysis"], "🔗")
-    render_card("Recommended Intro Strategy", selected_row["recommended_intro_strategy"], "📨")
+
+    render_card(
+        "Strategic Interpretation",
+        selected_row[
+            "strategic_interpretation"
+        ],
+        "🎯",
+    )
+
+    render_card(
+        "Partnership Archetype",
+        (
+            f"{selected_row['partnership_archetype']}\n\n"
+            f"{selected_row['recommended_partnership_model']}"
+        ),
+        "🧭",
+    )
+
+    render_card(
+        "Recommended Action",
+        selected_row[
+            "recommended_action"
+        ],
+        "🚀",
+    )
+
 
 with intelligence_col_2:
-    render_card("Expansion Potential", selected_row["expansion_potential"], "🌍")
-    render_card("Partnership Thesis", selected_row["partnership_thesis"], "🤝")
-    render_card("AI Partnership Insight", selected_row["ai_partnership_insight"], "🧠")
-    render_card("Next Best Action", selected_row["next_best_action"], "🚀")
 
-output_text = f"""Partnership Opportunity Brief
+    render_card(
+        "Expansion Potential",
+        selected_row[
+            "expansion_potential"
+        ],
+        "🌍",
+    )
+
+    render_card(
+        "Partnership Thesis",
+        selected_row[
+            "partnership_thesis"
+        ],
+        "🤝",
+    )
+
+    render_card(
+        "Outreach Handoff Context",
+        selected_row[
+            "outreach_handoff_context"
+        ],
+        "📨",
+    )
+
+
+# ============================================================
+# PARTNERSHIP OPPORTUNITY BRIEF
+# ============================================================
+
+st.divider()
+
+st.subheader(
+    "📄 Partnership Opportunity Brief"
+)
+
+brief_text = f"""# Partnership Opportunity Brief
+
+## Opportunity
 
 Company: {selected_row['company']}
 Partner: {selected_row['partner']}
@@ -484,50 +1690,118 @@ Region: {selected_row['region']}
 Industry: {selected_row['industry']}
 Partner Type: {selected_row['partner_type']}
 Strategic Goal: {selected_row['strategic_goal']}
-Deal Value: {format_money(selected_row['deal_value_usd'])}
-Fit Score: {selected_row['partnership_fit_score']}
+
+## Commercial Value
+
+Estimated Partnership Value: {format_money(selected_row['deal_value_usd'])}
+
+## Partnership Intelligence
+
+Score: {selected_row['partnership_fit_score']}
 Fit Tier: {selected_row['fit_tier']}
 Priority: {selected_row['priority_level']}
+Partnership Archetype: {selected_row['partnership_archetype']}
+Relationship Signal: {selected_row['relationship_signal']}
+Market Overlap: {selected_row['market_overlap']}
+Execution Complexity: {selected_row['execution_complexity']}
 
-Strategic Fit:
-{selected_row['strategic_fit']}
+## Strategic Interpretation
 
-Expansion Potential:
-{selected_row['expansion_potential']}
+{selected_row['strategic_interpretation']}
 
-Synergy Analysis:
-{selected_row['synergy_analysis']}
+## Partnership Thesis
 
-Partnership Thesis:
 {selected_row['partnership_thesis']}
 
-Recommended Intro Strategy:
-{selected_row['recommended_intro_strategy']}
+## Expansion Potential
 
-AI Partnership Insight:
-{selected_row['ai_partnership_insight']}
+{selected_row['expansion_potential']}
 
-Next Best Action:
-{selected_row['next_best_action']}
+## Recommended Partnership Model
+
+{selected_row['recommended_partnership_model']}
+
+## Recommended Next Action
+
+{selected_row['recommended_action']}
+
+## Explainable Score
+
+{selected_row['score_rationale']}
+
+## Outreach Handoff
+
+{selected_row['outreach_handoff_context']}
+
+---
+
+Generated by the Partnership Intelligence Platform.
 """
 
+
 safe_name = (
-    f"{selected_row['company']}_{selected_row['partner']}"
+    f"{selected_row['company']}_"
+    f"{selected_row['partner']}"
     .lower()
-    .replace(" ", "_")
-    .replace("/", "_")
+    .replace(
+        " ",
+        "_",
+    )
+    .replace(
+        "/",
+        "_",
+    )
 )
 
-brief_path = f"exports/{safe_name}_partnership_brief.txt"
-
-with open(brief_path, "w", encoding="utf-8") as f:
-    f.write(output_text)
-
-st.success(f"Partnership brief saved to {brief_path}")
-
 st.download_button(
-    "⬇ Download Partnership Brief",
-    output_text,
-    file_name=f"{safe_name}_partnership_brief.txt",
-    mime="text/plain",
+    "⬇ Download Partnership Opportunity Brief",
+    brief_text,
+    file_name=f"{safe_name}_partnership_brief.md",
+    mime="text/markdown",
+)
+
+
+# ============================================================
+# ECOSYSTEM POSITIONING
+# ============================================================
+
+st.divider()
+
+st.subheader(
+    "🧠 Commercial Intelligence Ecosystem"
+)
+
+st.markdown(
+    """
+```text
+IDENTIFY
+Opportunity Discovery
+
+        ↓
+
+PRIORITIZE
+Lead Qualification & Revenue Prioritization
+
+        ↓
+
+ENGAGE
+Adaptive Outreach Intelligence
+
+        ↓
+
+PARTNER
+Partnership Intelligence
+← YOU ARE HERE
+
+        ↓
+
+EXPAND
+Global Market Entry Intelligence
+```
+"""
+)
+
+st.caption(
+    "The objective is to connect structured commercial logic "
+    "across the complete Business Development lifecycle."
 )
