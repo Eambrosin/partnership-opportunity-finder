@@ -62,6 +62,10 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "government partner": 90,
         "market entry partner": 95,
         "commercial representative": 85,
+        "operational partner": 90,
+        "logistics partner": 90,
+        "execution partner": 90,
+        "service delivery partner": 85,
         "referral partner": 80,
         "consulting partner": 70,
         "other": 60,
@@ -185,42 +189,30 @@ def build_runtime_config(
     )
 
     if preferred_regions:
-
         for region in preferred_regions:
             config["region_scores"][str(region)] = 100
 
     if preferred_industries:
-
         for industry in preferred_industries:
             config["industry_scores"][str(industry)] = 100
 
     if preferred_partner_types:
-
         for partner_type in preferred_partner_types:
             config["partner_type_scores"][
                 str(partner_type).strip().lower()
             ] = 100
 
     if weights is not None:
-
-        config["weights"] = normalize_weights(
-            weights
-        )
-
+        config["weights"] = normalize_weights(weights)
     else:
-
         config["weights"] = normalize_weights(
             config["weights"]
         )
 
     if deal_value_target_usd is not None:
-
-        target = float(
-            deal_value_target_usd
-        )
+        target = float(deal_value_target_usd)
 
         if target <= 0:
-
             raise ValueError(
                 "deal_value_target_usd must be greater than zero."
             )
@@ -232,19 +224,16 @@ def build_runtime_config(
     )
 
     if strategic_fit_threshold is not None:
-
         thresholds["strategic_fit"] = float(
             strategic_fit_threshold
         )
 
     if promising_fit_threshold is not None:
-
         thresholds["promising_fit"] = float(
             promising_fit_threshold
         )
 
     if exploratory_fit_threshold is not None:
-
         thresholds["exploratory_fit"] = float(
             exploratory_fit_threshold
         )
@@ -254,7 +243,6 @@ def build_runtime_config(
         > thresholds["promising_fit"]
         > thresholds["exploratory_fit"]
     ):
-
         raise ValueError(
             "Tier thresholds must satisfy "
             "Strategic Fit > Promising Fit > Exploratory Fit."
@@ -276,28 +264,18 @@ def _first_value(
 ) -> Any:
 
     for key in keys:
-
-        value = row.get(
-            key
-        )
+        value = row.get(key)
 
         if value is None:
             continue
 
         try:
-
-            if pd.isna(
-                value
-            ):
+            if pd.isna(value):
                 continue
-
         except Exception:
             pass
 
-        if str(
-            value
-        ).strip():
-
+        if str(value).strip():
             return value
 
     return default
@@ -309,33 +287,19 @@ def _safe_float(
 ) -> float:
 
     try:
-
         if value is None:
-            return float(
-                default
-            )
+            return float(default)
 
         try:
-
-            if pd.isna(
-                value
-            ):
-                return float(
-                    default
-                )
-
+            if pd.isna(value):
+                return float(default)
         except Exception:
             pass
 
-        return float(
-            value
-        )
+        return float(value)
 
     except Exception:
-
-        return float(
-            default
-        )
+        return float(default)
 
 
 def _normalized_key(
@@ -357,16 +321,12 @@ def validate_partnership_dataframe(
         dataframe.columns
     )
 
-    for (
-        logical_name,
-        alternatives,
-    ) in REQUIRED_FIELD_ALTERNATIVES.items():
+    for logical_name, alternatives in REQUIRED_FIELD_ALTERNATIVES.items():
 
         if not any(
             column in columns
             for column in alternatives
         ):
-
             missing.append(
                 f"{logical_name} "
                 f"({' or '.join(alternatives)})"
@@ -380,7 +340,6 @@ def normalize_partnership(
 ) -> Dict[str, Any]:
 
     return {
-
         "company": str(
             _first_value(
                 row,
@@ -560,28 +519,15 @@ def _lookup_score(
 ) -> float:
 
     normalized_mapping = {
-
-        _normalized_key(
-            key
-        ): float(
-            score
-        )
-
-        for key, score
-        in mapping.items()
+        _normalized_key(key): float(score)
+        for key, score in mapping.items()
     }
 
     return round(
-
         normalized_mapping.get(
-            _normalized_key(
-                value
-            ),
-            float(
-                default
-            ),
+            _normalized_key(value),
+            float(default),
         ),
-
         1,
     )
 
@@ -592,14 +538,11 @@ def score_opportunity_value(
 ) -> float:
 
     if target_value <= 0:
-
         return 0.0
 
     score = (
         max(
-            float(
-                value
-            ),
+            float(value),
             0.0,
         )
         / target_value
@@ -636,7 +579,6 @@ def score_components(
     )
 
     raw_scores = {
-
         "region_fit": _lookup_score(
             normalized["region"],
             active_config[
@@ -708,7 +650,6 @@ def score_components(
     ]
 
     weighted_contributions = {
-
         component: round(
             raw_scores[
                 component
@@ -719,42 +660,24 @@ def score_components(
             2,
         )
 
-        for component
-        in weights
+        for component in weights
     }
 
     total_score = round(
-
         sum(
             weighted_contributions.values()
         ),
-
         1,
     )
 
     return {
-
-        "raw_scores": (
-            raw_scores
-        ),
-
-        "weighted_contributions": (
-            weighted_contributions
-        ),
-
-        "weights": (
-            weights
-        ),
-
-        "total_score": (
-            total_score
-        ),
-
-        "deal_value_target_usd": (
-            active_config[
-                "deal_value_target_usd"
-            ]
-        ),
+        "raw_scores": raw_scores,
+        "weighted_contributions": weighted_contributions,
+        "weights": weights,
+        "total_score": total_score,
+        "deal_value_target_usd": active_config[
+            "deal_value_target_usd"
+        ],
     }
 
 
@@ -782,19 +705,16 @@ def partnership_tier(
     if score >= thresholds[
         "strategic_fit"
     ]:
-
         return "Strategic Fit"
 
     if score >= thresholds[
         "promising_fit"
     ]:
-
         return "Promising Fit"
 
     if score >= thresholds[
         "exploratory_fit"
     ]:
-
         return "Exploratory Fit"
 
     return "Low Fit"
@@ -802,12 +722,29 @@ def partnership_tier(
 
 def priority_level(
     score: float,
+    config: Optional[Mapping[str, Any]] = None,
 ) -> str:
 
-    if score >= 80:
+    active_config = build_runtime_config(
+        base_config=(
+            config
+            if config is not None
+            else DEFAULT_CONFIG
+        )
+    )
+
+    thresholds = active_config[
+        "tier_thresholds"
+    ]
+
+    if score >= thresholds[
+        "strategic_fit"
+    ]:
         return "High"
 
-    if score >= 60:
+    if score >= thresholds[
+        "promising_fit"
+    ]:
         return "Medium"
 
     return "Low"
@@ -830,12 +767,26 @@ def classify_partnership_archetype(
     if any(
         keyword in text
         for keyword in [
+            "operational",
+            "operations",
+            "logistics",
+            "execution partner",
+            "service delivery",
+            "delivery partner",
+            "fulfillment",
+            "fulfilment",
+        ]
+    ):
+        return "Operational Partnership"
+
+    if any(
+        keyword in text
+        for keyword in [
             "distributor",
             "reseller",
             "channel",
         ]
     ):
-
         return "Channel Partnership"
 
     if any(
@@ -847,7 +798,6 @@ def classify_partnership_archetype(
             "software",
         ]
     ):
-
         return "Technology Alliance"
 
     if any(
@@ -858,7 +808,6 @@ def classify_partnership_archetype(
             "public sector",
         ]
     ):
-
         return "Institutional Partnership"
 
     if any(
@@ -869,7 +818,6 @@ def classify_partnership_archetype(
             "introduction",
         ]
     ):
-
         return "Referral Partnership"
 
     if any(
@@ -882,7 +830,6 @@ def classify_partnership_archetype(
             "expansion",
         ]
     ):
-
         return "Market Access Partnership"
 
     return "Strategic Alliance"
@@ -893,6 +840,12 @@ def recommended_partnership_model(
 ) -> str:
 
     mapping = {
+        "Operational Partnership": (
+            "Evaluate an operational collaboration, "
+            "service-delivery agreement or execution partnership "
+            "with clearly defined responsibilities, service levels "
+            "and commercial handoffs."
+        ),
 
         "Channel Partnership": (
             "Evaluate reseller, distribution "
@@ -942,28 +895,41 @@ def recommended_partnership_model(
 def recommended_action(
     partnership: Mapping[str, Any],
     score: float,
+    config: Optional[Mapping[str, Any]] = None,
 ) -> str:
 
     normalized = normalize_partnership(
         partnership
     )
 
+    active_config = build_runtime_config(
+        base_config=(
+            config
+            if config is not None
+            else DEFAULT_CONFIG
+        )
+    )
+
+    thresholds = active_config[
+        "tier_thresholds"
+    ]
+
     relationship = normalized[
         "relationship_signal"
     ]
 
     if (
-        score >= 80
+        score >= thresholds["strategic_fit"]
         and relationship == "hot"
     ):
-
         return (
             "Schedule an executive discovery call "
             "and prepare a joint value hypothesis."
         )
 
-    if score >= 80:
-
+    if score >= thresholds[
+        "strategic_fit"
+    ]:
         return (
             "Prioritize targeted partner research, "
             "identify the strongest introduction path "
@@ -971,22 +937,21 @@ def recommended_action(
         )
 
     if (
-        score >= 60
-        and relationship
-        in {
+        score >= thresholds["promising_fit"]
+        and relationship in {
             "hot",
             "warm",
         }
     ):
-
         return (
             "Send a targeted partnership introduction "
             "and validate mutual priorities, commercial "
             "value and decision context."
         )
 
-    if score >= 60:
-
+    if score >= thresholds[
+        "promising_fit"
+    ]:
         return (
             "Develop a partnership hypothesis, "
             "validate strategic relevance and build "
@@ -994,8 +959,9 @@ def recommended_action(
             "a formal partnership motion."
         )
 
-    if score >= 50:
-
+    if score >= thresholds[
+        "exploratory_fit"
+    ]:
         return (
             "Validate strategic fit and value exchange "
             "before allocating significant partnership "
@@ -1017,18 +983,30 @@ def strategic_interpretation(
     partnership: Mapping[str, Any],
     score: float,
     archetype: str,
+    config: Optional[Mapping[str, Any]] = None,
 ) -> str:
 
     normalized = normalize_partnership(
         partnership
     )
 
+    active_config = build_runtime_config(
+        base_config=(
+            config
+            if config is not None
+            else DEFAULT_CONFIG
+        )
+    )
+
+    thresholds = active_config[
+        "tier_thresholds"
+    ]
+
     signals = []
 
     if normalized[
         "market_overlap"
     ] == "high":
-
         signals.append(
             "strong market overlap"
         )
@@ -1036,7 +1014,6 @@ def strategic_interpretation(
     if normalized[
         "relationship_signal"
     ] == "hot":
-
         signals.append(
             "strong relationship momentum"
         )
@@ -1044,7 +1021,6 @@ def strategic_interpretation(
     elif normalized[
         "relationship_signal"
     ] == "warm":
-
         signals.append(
             "an existing relationship signal"
         )
@@ -1052,38 +1028,34 @@ def strategic_interpretation(
     if normalized[
         "execution_complexity"
     ] == "low":
-
         signals.append(
             "relatively favorable execution conditions"
         )
 
-    if score >= 80:
-
+    if score >= thresholds[
+        "strategic_fit"
+    ]:
         strength = "strong"
 
-    elif score >= 65:
-
+    elif score >= thresholds[
+        "promising_fit"
+    ]:
         strength = "promising"
 
-    elif score >= 50:
-
+    elif score >= thresholds[
+        "exploratory_fit"
+    ]:
         strength = "exploratory"
 
     else:
-
         strength = "limited"
 
     signal_text = (
-
         ", ".join(
             signals
         )
-
         if signals
-
-        else (
-            "a mixed set of commercial signals"
-        )
+        else "a mixed set of commercial signals"
     )
 
     return (
@@ -1119,7 +1091,6 @@ def expansion_potential(
     ]
 
     if region:
-
         return (
             f"The opportunity may support commercial "
             f"access or expansion in {region}, "
@@ -1173,42 +1144,18 @@ def score_rationale(
 ) -> str:
 
     labels = {
-
-        "region_fit": (
-            "Region Fit"
-        ),
-
-        "industry_alignment": (
-            "Industry Alignment"
-        ),
-
-        "market_access": (
-            "Market Access"
-        ),
-
-        "relationship_strength": (
-            "Relationship Strength"
-        ),
-
-        "opportunity_value": (
-            "Opportunity Value"
-        ),
-
-        "partner_type_fit": (
-            "Partner Type Fit"
-        ),
-
-        "execution_feasibility": (
-            "Execution Feasibility"
-        ),
+        "region_fit": "Region Fit",
+        "industry_alignment": "Industry Alignment",
+        "market_access": "Market Access",
+        "relationship_strength": "Relationship Strength",
+        "opportunity_value": "Opportunity Value",
+        "partner_type_fit": "Partner Type Fit",
+        "execution_feasibility": "Execution Feasibility",
     }
 
     parts = []
 
-    for (
-        key,
-        raw_score,
-    ) in components[
+    for key, raw_score in components[
         "raw_scores"
     ].items():
 
@@ -1225,7 +1172,6 @@ def score_rationale(
         ]
 
         parts.append(
-
             f"{labels[key]}: "
             f"{raw_score:.1f}/100 × "
             f"{weight * 100:.0f}% = "
@@ -1245,6 +1191,7 @@ def outreach_handoff_context(
     partnership: Mapping[str, Any],
     score: float,
     tier: str,
+    priority: str,
     action: str,
     archetype: str,
 ) -> str:
@@ -1259,7 +1206,8 @@ def outreach_handoff_context(
         f"{normalized['partner']}. "
         f"Archetype: {archetype}. "
         f"Partnership score: {score:.1f}. "
-        f"Tier: {tier}. "
+        f"Fit tier: {tier}. "
+        f"Commercial priority: {priority}. "
         f"Relationship signal: "
         f"{normalized['relationship_signal']}. "
         f"Recommended internal action: "
@@ -1280,9 +1228,17 @@ def evaluate_partnership(
         partnership
     )
 
+    active_config = build_runtime_config(
+        base_config=(
+            config
+            if config is not None
+            else DEFAULT_CONFIG
+        )
+    )
+
     components = score_components(
         normalized,
-        config=config,
+        config=active_config,
     )
 
     score = components[
@@ -1291,11 +1247,12 @@ def evaluate_partnership(
 
     tier = partnership_tier(
         score,
-        config=config,
+        config=active_config,
     )
 
     priority = priority_level(
-        score
+        score,
+        config=active_config,
     )
 
     archetype = classify_partnership_archetype(
@@ -1316,96 +1273,64 @@ def evaluate_partnership(
     action = recommended_action(
         normalized,
         score,
+        config=active_config,
     )
 
-    interpretation = (
-        strategic_interpretation(
-            normalized,
-            score,
-            archetype,
-        )
+    interpretation = strategic_interpretation(
+        normalized,
+        score,
+        archetype,
+        config=active_config,
     )
 
-    expansion = (
-        expansion_potential(
-            normalized
-        )
+    expansion = expansion_potential(
+        normalized
     )
 
-    thesis = (
-        partnership_thesis(
-            normalized,
-            archetype,
-        )
+    thesis = partnership_thesis(
+        normalized,
+        archetype,
     )
 
-    rationale = (
-        score_rationale(
-            components
-        )
+    rationale = score_rationale(
+        components
     )
 
-    handoff = (
-        outreach_handoff_context(
-            normalized,
-            score,
-            tier,
-            action,
-            archetype,
-        )
+    handoff = outreach_handoff_context(
+        normalized,
+        score,
+        tier,
+        priority,
+        action,
+        archetype,
     )
 
     return {
-
         **normalized,
 
-        "partnership_fit_score": (
-            score
-        ),
+        "partnership_fit_score": score,
 
-        "fit_tier": (
-            tier
-        ),
+        "fit_tier": tier,
 
-        "priority_level": (
-            priority
-        ),
+        "priority_level": priority,
 
-        "partnership_archetype": (
-            archetype
-        ),
+        "partnership_archetype": archetype,
 
-        "recommended_partnership_model": (
-            partnership_model
-        ),
+        "recommended_partnership_model": partnership_model,
 
-        "recommended_action": (
-            action
-        ),
+        "recommended_action": action,
 
-        "strategic_interpretation": (
-            interpretation
-        ),
+        "strategic_interpretation": interpretation,
 
-        "expansion_potential": (
-            expansion
-        ),
+        "expansion_potential": expansion,
 
-        "partnership_thesis": (
-            thesis
-        ),
+        "partnership_thesis": thesis,
 
-        "score_rationale": (
-            rationale
-        ),
+        "score_rationale": rationale,
 
-        "score_breakdown": (
-            components
-        ),
+        "score_breakdown": components,
 
-        "outreach_handoff_context": (
-            handoff
-        ),
+        "outreach_handoff_context": handoff,
     }
 
 
@@ -1418,14 +1343,11 @@ def rank_partnerships(
     config: Optional[Mapping[str, Any]] = None,
 ) -> pd.DataFrame:
 
-    missing = (
-        validate_partnership_dataframe(
-            dataframe
-        )
+    missing = validate_partnership_dataframe(
+        dataframe
     )
 
     if missing:
-
         raise ValueError(
             "Missing required partnership fields: "
             + ", ".join(
@@ -1433,15 +1355,21 @@ def rank_partnerships(
             )
         )
 
-    records = [
+    active_config = build_runtime_config(
+        base_config=(
+            config
+            if config is not None
+            else DEFAULT_CONFIG
+        )
+    )
 
+    records = [
         evaluate_partnership(
             row.to_dict(),
-            config=config,
+            config=active_config,
         )
 
-        for _, row
-        in dataframe.iterrows()
+        for _, row in dataframe.iterrows()
     ]
 
     ranked = pd.DataFrame(
@@ -1449,21 +1377,17 @@ def rank_partnerships(
     )
 
     if ranked.empty:
-
         return ranked
 
     ranked = ranked.sort_values(
-
         by=[
             "partnership_fit_score",
             "deal_value_usd",
         ],
-
         ascending=[
             False,
             False,
         ],
-
     ).reset_index(
         drop=True
     )
