@@ -1,255 +1,383 @@
-# 🤝 AI Partnership Opportunity Finder
+# Partnership Intelligence Platform
 
-### Live Demo
+> A configurable and explainable decision-support platform for identifying, scoring and prioritizing strategic partnership opportunities.
 
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)]()
+[![Streamlit](https://img.shields.io/badge/Streamlit-App-red)]()
+[![Tests](https://img.shields.io/badge/Tests-Pytest-green)]()
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)]()
+
+🔗 **Live Demo:**  
 https://partnership-opportunity-finder-eambrosin.streamlit.app/
 
-### GitHub Repository
+---
 
-https://github.com/Eambrosin/partnership-opportunity-finder
+## Overview
+
+The **Partnership Intelligence Platform** is a decision-support system designed for Business Development, Strategic Partnerships, GTM and Market Expansion teams.
+
+Instead of relying on subjective partner evaluation, the platform transforms partnership assessment into a structured, transparent and explainable process.
+
+Potential partners are evaluated across multiple strategic dimensions and converted into an actionable **Partnership Fit Score**.
+
+The platform combines:
+
+- configurable weighted scoring
+- explainable decision logic
+- partnership archetype classification
+- strategic fit analysis
+- expansion opportunity assessment
+- execution feasibility
+- partnership model recommendations
+- portfolio-level visualization
+- prioritization thresholds
+- structured partnership workflows
+
+The result is a practical intelligence layer between **partner discovery** and **commercial execution**.
 
 ---
 
-## Executive Summary
+## What Problem Does It Solve?
 
-AI Partnership Opportunity Finder is an AI-powered platform designed to help Business Development, Strategic Partnerships, GTM and International Expansion teams identify, score and prioritize partnership opportunities.
+Partnership teams often evaluate opportunities using fragmented information:
 
-The platform combines strategic alignment, market overlap, relationship strength, expansion potential and commercial opportunity value into a structured scoring framework that supports executive decision-making.
+- company size
+- geography
+- strategic relevance
+- market access
+- commercial potential
+- operational feasibility
+- relationship strength
 
-Organizations can rapidly evaluate partnership portfolios, uncover high-priority opportunities and generate executive-level partnership intelligence through a single interactive workspace.
+These factors are rarely evaluated consistently.
 
----
+The Partnership Intelligence Platform creates a repeatable framework for answering three questions:
 
-## Key Features
-
-### Executive Partnership Dashboard
-
-Provides an executive overview of:
-
-* Total Opportunities
-* Pipeline Value
-* Average Partnership Fit Score
-* High-Priority Opportunities
-* Top Strategic Fit
-* Top Revenue Opportunity
-* Top Expansion Opportunity
+1. **Which partnerships deserve attention?**
+2. **Why are they strategically relevant?**
+3. **What should the next commercial action be?**
 
 ---
 
-### Partnership Fit Scoring Engine
+## Partnership Intelligence Model
 
-Automatically scores partnership opportunities based on:
+Each opportunity is evaluated across seven dimensions.
 
-* Regional Attractiveness
-* Industry Alignment
-* Market Overlap
-* Relationship Signals
-* Opportunity Value
+| Dimension | Default Weight |
+|---|---:|
+| Strategic Fit | 15% |
+| Market Access | 15% |
+| Commercial Potential | 20% |
+| Expansion Potential | 15% |
+| Relationship Strength | 15% |
+| Execution Feasibility | 10% |
+| Strategic Synergy | 10% |
 
-Each opportunity receives:
+**Total: 100%**
 
-* Partnership Fit Score
-* Strategic Classification
-* Priority Level
+The weighting model is configurable, allowing teams to adapt the framework to different partnership strategies.
 
----
+For example:
 
-### Opportunity Heatmap
-
-Interactive visualization displaying:
-
-* Partnership Fit Score
-* Commercial Opportunity Value
-* Priority Level
-
-Helping teams quickly identify the highest-impact opportunities.
+- market-entry programs may prioritize **Market Access**
+- channel partnerships may prioritize **Commercial Potential**
+- ecosystem alliances may prioritize **Strategic Synergy**
+- early-stage opportunities may prioritize **Execution Feasibility**
 
 ---
 
-### Regional Expansion Dashboard
+## Explainable Scoring
 
-Analyze strategic opportunities by region:
+The scoring engine is intentionally transparent.
 
-* LATAM
-* MENA
-* Europe
-* North America
-* APAC
-* Africa
+Rather than producing an opaque recommendation, the platform exposes the factors contributing to each opportunity's score.
 
-Track:
+This makes it possible to understand:
 
-* Total Pipeline Value
-* Opportunity Distribution
-* Regional Prioritization
+- why a partner ranks highly
+- which factors reduce the score
+- where strategic uncertainty exists
+- which assumptions should be validated before outreach
 
----
+The goal is not to replace commercial judgment.
 
-### Partner Portfolio Analysis
-
-Evaluate the composition of the partnership ecosystem by:
-
-* Distribution Partners
-* Technology Partners
-* Strategic Partners
-* Investment Partners
-* Operational Partners
-
-Understand where partnership investments should be concentrated.
+The platform is designed to **structure and augment human decision-making**.
 
 ---
 
-### Executive Recommendation Center
+## Partnership Archetypes
 
-Automatically surfaces:
+Opportunities can also be classified according to their likely partnership role.
 
-* Top Strategic Opportunities
-* Highest-Impact Partnerships
-* Executive-Level Recommendations
-* Recommended Next Actions
+Examples include:
 
-Designed to support leadership decision-making and resource allocation.
+- Strategic Alliance
+- Market Entry Partner
+- Distribution Partner
+- Channel Partner
+- Technology Partner
+- Ecosystem Partner
+- Commercial Referral Partner
 
----
-
-### AI Partnership Intelligence Layer
-
-Generates AI-style strategic insights including:
-
-* Strategic Fit Assessment
-* Expansion Potential Analysis
-* Synergy Analysis
-* Partnership Thesis
-* AI Partnership Insight
-* Recommended Introduction Strategy
-* Next Best Action
+This allows users to evaluate opportunities according to the type of value they can create rather than using a single generic partnership framework.
 
 ---
 
-### Partnership Intelligence Workspace
+## Opportunity Prioritization
 
-Detailed opportunity analysis including:
+The platform converts the Partnership Fit Score into configurable priority thresholds.
 
-* Company Profile
-* Partnership Context
-* Strategic Assessment
-* Commercial Opportunity Review
-* Executive Recommendations
+Example:
 
----
+| Score | Priority |
+|---|---|
+| 80–100 | High Priority |
+| 60–79 | Strategic Review |
+| Below 60 | Monitor |
 
-### Export Center
-
-Export outputs as:
-
-* Ranked Partnership CSV
-* Executive Partnership Brief (.txt)
-
-Supporting internal reviews, stakeholder communication and executive presentations.
+Thresholds can be adapted depending on portfolio size and partnership strategy.
 
 ---
 
-## Screenshots
+## Partnership Models
 
-### Executive Partnership Dashboard
+For each opportunity, the platform can support the evaluation of possible commercial structures such as:
 
-![Executive Dashboard](screenshots/executive-dashboard.png)
+- Referral
+- Reseller
+- Distribution
+- Co-selling
+- Strategic Alliance
+- Market-entry collaboration
+- Technology integration
+- Joint go-to-market
 
----
-
-### Opportunity Heatmap
-
-![Opportunity Heatmap](screenshots/opportunity-heatmap.png)
-
----
-
-### Executive Recommendation Center
-
-![Recommendation Center](screenshots/recommendation-center.png)
+This creates a bridge between **partner scoring** and **commercial design**.
 
 ---
 
-### Partnership Intelligence Workspace
+## Dashboard
 
-![Intelligence Workspace](screenshots/intelligence-workspace.png)
+The Streamlit interface provides a portfolio-level view of partnership opportunities.
 
----
+Key components include:
 
-## Sample Dataset
-
-The project includes sample partnership opportunities across multiple sectors and regions.
-
-Industries:
-
-* Agribusiness
-* Renewable Energy
-* Fintech
-* Logistics & Trade
-* Real Estate
-
-Regions:
-
-* LATAM
-* MENA
-* Europe
-
-The sample data demonstrates how organizations can evaluate partnership portfolios and prioritize strategic alliances.
+- Executive Partnership Summary
+- Partnership Fit Score ranking
+- Strategic opportunity segmentation
+- Geographic opportunity analysis
+- Expansion potential visualization
+- Partnership archetype analysis
+- Priority pipeline
+- Opportunity detail views
+- Partnership Intelligence Workspace
 
 ---
 
-## Strategic Use Cases
+## Partnership Intelligence Workspace
 
-### Business Development
+The workspace provides a deeper view of individual opportunities.
 
-* Partnership Opportunity Qualification
-* Commercial Opportunity Prioritization
-* Strategic Account Expansion
-* Pipeline Management
+Users can inspect:
 
----
+- score breakdown
+- strategic rationale
+- market-entry potential
+- synergy drivers
+- execution constraints
+- partnership archetype
+- recommended partnership model
+- recommended next action
 
-### Strategic Partnerships
-
-* Partner Evaluation
-* Alliance Development
-* Ecosystem Expansion
-* Strategic Collaboration Assessment
-
----
-
-### GTM Strategy
-
-* Channel Strategy Planning
-* Market Entry Partnerships
-* Distribution Expansion
-* Commercial Growth Initiatives
+This converts the dashboard from a visualization tool into a practical commercial decision-support system.
 
 ---
 
-### International Expansion
+## Outreach Handoff
 
-* Regional Opportunity Mapping
-* Cross-Border Expansion Analysis
-* Market Access Planning
-* Strategic Growth Prioritization
+Once an opportunity has been qualified, the intelligence generated by the platform can be transferred into a structured outreach workflow.
+
+This creates a natural progression:
+
+Discovery  
+↓  
+Qualification  
+↓  
+Partnership Intelligence  
+↓  
+Prioritization  
+↓  
+Outreach  
+↓  
+Commercial Conversation
+
+The repository is therefore designed as part of a broader **Business Development Intelligence workflow**.
 
 ---
 
-## Technology Stack
+## Deterministic Intelligence + AI
 
-* Python
-* Streamlit
-* Pandas
-* Plotly
+The core scoring system is deterministic.
+
+This is intentional.
+
+Strategic rankings should remain:
+
+- reproducible
+- explainable
+- auditable
+- configurable
+
+AI can then be added as an intelligence layer for tasks such as:
+
+- partnership thesis generation
+- opportunity summaries
+- localized outreach
+- account research
+- strategic rationale generation
+
+This architecture avoids using an LLM as a black-box scoring engine.
 
 ---
 
-## Installation
+## Architecture
+
+```text
+                     ┌─────────────────────┐
+                     │   Partnership Data  │
+                     └──────────┬──────────┘
+                                │
+                                ▼
+                     ┌─────────────────────┐
+                     │ Data Normalization  │
+                     └──────────┬──────────┘
+                                │
+                                ▼
+                     ┌─────────────────────┐
+                     │   Scoring Engine    │
+                     │                     │
+                     │ Configurable        │
+                     │ Weighted Factors    │
+                     └──────────┬──────────┘
+                                │
+                ┌───────────────┴───────────────┐
+                │                               │
+                ▼                               ▼
+       ┌─────────────────┐             ┌──────────────────┐
+       │ Explainability  │             │ Archetype Engine │
+       └────────┬────────┘             └─────────┬────────┘
+                │                                │
+                └──────────────┬─────────────────┘
+                               │
+                               ▼
+                    ┌────────────────────┐
+                    │ Partnership        │
+                    │ Intelligence Layer │
+                    └─────────┬──────────┘
+                              │
+                              ▼
+                    ┌────────────────────┐
+                    │ Streamlit          │
+                    │ Decision Dashboard │
+                    └─────────┬──────────┘
+                              │
+                              ▼
+                    ┌────────────────────┐
+                    │ Outreach / BD      │
+                    │ Execution          │
+                    └────────────────────┘
+```
+
+---
+
+## Project Structure
+
+```text
+partnership-opportunity-finder/
+│
+├── app.py
+├── partnership_engine.py
+├── requirements.txt
+├── README.md
+│
+├── data/
+│   └── sample_partnerships.csv
+│
+├── tests/
+│   └── ...
+│
+└── .github/
+    └── workflows/
+        └── ...
+```
+
+The architecture separates the partnership intelligence logic from the Streamlit presentation layer.
+
+This makes the scoring engine easier to:
+
+- test
+- reuse
+- extend
+- integrate into other applications
+
+---
+
+## Testing
+
+The project includes automated tests for the core partnership intelligence logic.
+
+Tests are designed to validate areas such as:
+
+- scoring behavior
+- weighting logic
+- thresholds
+- classifications
+- edge cases
+- deterministic outputs
+
+Run the test suite with:
+
+```bash
+pytest
+```
+
+---
+
+## Continuous Integration
+
+GitHub Actions can automatically execute the test suite whenever changes are pushed to the repository.
+
+This helps ensure that modifications to the scoring model do not introduce unexpected behavior.
+
+---
+
+## Sample Data
+
+The repository includes sample partnership opportunities so the platform can be explored immediately.
+
+The dataset represents realistic Business Development scenarios involving:
+
+- different regions
+- different industries
+- different company profiles
+- different partnership models
+- different levels of commercial attractiveness
+
+No proprietary company information is required to run the demo.
+
+---
+
+## Running Locally
 
 Clone the repository:
 
 ```bash
 git clone https://github.com/Eambrosin/partnership-opportunity-finder.git
+```
+
+Enter the project directory:
+
+```bash
 cd partnership-opportunity-finder
 ```
 
@@ -259,7 +387,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Run locally:
+Run the Streamlit application:
 
 ```bash
 streamlit run app.py
@@ -267,38 +395,60 @@ streamlit run app.py
 
 ---
 
-## Project Structure
+## v2.0.0
 
-```text
-partnership-opportunity-finder/
+The second major iteration of the project moves the application from a simple opportunity-ranking dashboard toward a more complete **Partnership Intelligence Platform**.
 
-├── app.py
-├── requirements.txt
-├── README.md
-├── data/
-│   └── sample_partnerships.csv
-├── screenshots/
-│   ├── executive-dashboard.png
-│   ├── opportunity-heatmap.png
-│   ├── recommendation-center.png
-│   └── intelligence-workspace.png
-└── exports/
-```
+Key improvements include:
+
+- configurable multi-factor scoring
+- clearer separation between scoring and presentation
+- explainable opportunity evaluation
+- partnership archetypes
+- execution feasibility
+- configurable prioritization thresholds
+- partnership model recommendations
+- improved portfolio intelligence
+- stronger testing structure
+- CI-ready architecture
+- clearer connection between intelligence and outreach
 
 ---
 
-## Future Enhancements
+## Roadmap
 
-Potential future versions may include:
+Potential future developments include:
 
-* OpenAI Integration
-* Partnership Discovery Engine
-* CRM Integrations
-* Partner Ecosystem Mapping
-* Executive Briefing Automation
-* Multi-Market Scenario Planning
-* Partnership Risk Assessment
-* Strategic Alliance Benchmarking
+- CRM integrations
+- automatic company enrichment
+- live market intelligence
+- opportunity history and score evolution
+- account-level research
+- relationship mapping
+- partnership pipeline tracking
+- AI-generated partnership theses
+- multilingual outreach generation
+- API access
+- team collaboration
+- custom scoring templates by partnership strategy
+
+---
+
+## Portfolio Context
+
+This project is part of a broader portfolio exploring the intersection of:
+
+**Business Development + Strategic Partnerships + Market Expansion + AI**
+
+The objective is to demonstrate how lightweight software and AI-assisted workflows can improve real commercial decision-making.
+
+Related projects explore areas such as:
+
+- lead qualification
+- market-entry analysis
+- commercial prioritization
+- multilingual outreach
+- business-development intelligence
 
 ---
 
@@ -306,44 +456,7 @@ Potential future versions may include:
 
 **Eduardo Ambrosin**
 
-Business Development | Strategic Partnerships | GTM Strategy | Revenue Operations | International Expansion | AI Applications
+International Business Development · Strategic Partnerships · Market Expansion
 
-GitHub:
-
+GitHub:  
 https://github.com/Eambrosin
-
-LinkedIn:
-
-https://www.linkedin.com/in/eduardoambrosin/
-
----
-
-## Portfolio Projects
-
-### AI Lead Qualification & Revenue Prioritization Platform
-
-GitHub:
-https://github.com/Eambrosin/lead-qualification-scorer
-
-Live Demo:
-https://lead-qualification-scorer-eambrosin.streamlit.app/
-
----
-
-### AI Outreach Intelligence Platform
-
-GitHub:
-https://github.com/Eambrosin/outreach-sequence-generator
-
-Live Demo:
-https://outreach-sequence-generator-7dcmglcxfnmszlodg8lqre.streamlit.app/
-
----
-
-### AI Partnership Opportunity Finder
-
-GitHub:
-https://github.com/Eambrosin/partnership-opportunity-finder
-
-Live Demo:
-https://partnership-opportunity-finder-eambrosin.streamlit.app/
