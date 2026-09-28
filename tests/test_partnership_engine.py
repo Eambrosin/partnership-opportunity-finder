@@ -509,5 +509,45 @@ class PartnershipIntelligenceEngineTests(unittest.TestCase):
         )
 
 
+    def test_distribution_partner_is_classified_as_channel(self):
+
+        archetype = classify_partnership_archetype(
+            "Distribution Partner",
+            "Expand regional distribution",
+        )
+
+        self.assertEqual(
+            archetype,
+            "Channel Partnership",
+        )
+
+    def test_distribution_partner_receives_configured_partner_type_fit(self):
+
+        opportunity = dict(
+            self.channel_partnership
+        )
+
+        opportunity[
+            "partner_type"
+        ] = "Distribution Partner"
+
+        result = evaluate_partnership(
+            opportunity
+        )
+
+        raw_scores = result[
+            "score_breakdown"
+        ][
+            "raw_scores"
+        ]
+
+        self.assertEqual(
+            raw_scores[
+                "partner_type_fit"
+            ],
+            100.0,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
