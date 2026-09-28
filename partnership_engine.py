@@ -54,8 +54,10 @@ DEFAULT_CONFIG: Dict[str, Any] = {
 
     "partner_type_scores": {
         "channel partner": 100,
+        "distribution partner": 100,
         "distributor": 100,
         "reseller": 95,
+        "strategic partner": 95,
         "strategic alliance": 95,
         "technology partner": 90,
         "institutional partner": 90,
@@ -68,6 +70,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "service delivery partner": 85,
         "referral partner": 80,
         "consulting partner": 70,
+        "investment partner": 80,
         "other": 60,
     },
 
@@ -783,6 +786,7 @@ def classify_partnership_archetype(
         keyword in text
         for keyword in [
             "distributor",
+            "distribution",
             "reseller",
             "channel",
         ]
