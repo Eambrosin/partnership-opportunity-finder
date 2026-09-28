@@ -25,6 +25,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Validate Python syntax
+        run: |
+          python -m py_compile app.py
+          python -m py_compile partnership_engine.py
+
       - name: Run Partnership Intelligence tests
         env:
           PYTHONPATH: ${{ github.workspace }}
