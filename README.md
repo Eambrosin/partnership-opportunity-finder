@@ -1028,6 +1028,24 @@ Key capabilities include:
 
 ---
 
+## Limitations & Intended Use
+
+This project is a **decision-support portfolio application**, not a predictive partnership model or due-diligence system.
+
+Important boundaries:
+
+- scoring weights and thresholds are configurable commercial heuristics
+- the Partnership Intelligence Score is a prioritization aid, not a probability of success
+- sample partnership data is illustrative
+- the generated partnership thesis is explicitly a hypothesis to validate
+- the tool does not perform legal, financial, sanctions, compliance or counterparty due diligence
+- no live company enrichment or CRM write-back is included
+- recommended actions require human commercial judgment before execution
+
+These boundaries are intentional and keep the system explainable and auditable.
+
+---
+
 ## Roadmap
 
 Potential future developments include:
