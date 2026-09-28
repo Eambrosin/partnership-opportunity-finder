@@ -4,7 +4,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)]()
 [![Streamlit](https://img.shields.io/badge/Streamlit-App-red)]()
-[![Tests](https://img.shields.io/badge/Tests-Pytest-green)]()
+[![Python CI](https://github.com/Eambrosin/partnership-opportunity-finder/actions/workflows/ci.yml/badge.svg)](https://github.com/Eambrosin/partnership-opportunity-finder/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)]()
 
 🔗 **Live Demo:**  
@@ -983,7 +983,7 @@ Relevant areas for testing include:
 Run the test suite with:
 
 ```bash
-pytest
+python -m unittest discover -s tests -v
 ```
 
 ---
