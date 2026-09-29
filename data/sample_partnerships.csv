@@ -1,11 +1,12 @@
-company,partner,country,region,industry,partner_type,strategic_goal,market_overlap,deal_value_usd,relationship_signal
-Andina AgroExport,LatAm Distribution Group,Colombia,LATAM,Agribusiness,Distribution Partner,Expand regional distribution,high,250000,warm
-Solis Renewables,Gulf Energy Ventures,Brazil,MENA,Renewable Energy,Strategic Partner,Enter GCC renewable energy market,medium,400000,hot
-Sahara Fintech,OpenBank Alliance,Saudi Arabia,MENA,Fintech,Technology Partner,Launch embedded finance partnerships,high,300000,warm
-Lusitana Properties,EuroCapital Partners,Portugal,EU,Real Estate,Investment Partner,Source cross-border investment opportunities,medium,180000,cold
-Continental Foods,Andes Retail Network,Mexico,LATAM,Agribusiness,Channel Partner,Build regional retail access,high,220000,hot
-Gulf Trade Partners,PortLink Logistics,UAE,MENA,Logistics & Trade,Operational Partner,Improve cross-border trade execution,high,500000,warm
-Aesthetic Technology Europe,Italian Medical Distribution Network,Italy,EU,Medical Aesthetics,Medical Distributor,Expand clinic access and device distribution,high,350000,warm
-Aesthetic Technology Europe,Clinical Training Academy Italy,Italy,EU,Medical Aesthetics,Clinical Education Partner,Build practitioner training and clinical education network,high,120000,warm
-Aesthetic Technology Europe,Regional Aesthetic Clinic Group,Italy,EU,Medical Aesthetics,Clinic Network,Develop reference sites and multi-clinic commercial access,medium,280000,cold
-Civic Procurement Network,Institutional Technology Consortium,Brazil,LATAM,Government / Public Sector,Institutional Partner,Develop structured public-sector collaboration,medium,320000,warm
+schema_version,market_profile_id,territory_profile_id,vendor_profile_id,territory_region,territory_province,territory_city,company,partner,country,region,industry,partner_type,strategic_goal,market_overlap,deal_value_usd,relationship_signal
+1.0,,,,,,,Andina AgroExport,LatAm Distribution Group,Colombia,LATAM,Agribusiness,Distribution Partner,Expand regional distribution,high,250000,warm
+1.0,,,,,,,Solis Renewables,Gulf Energy Ventures,Brazil,MENA,Renewable Energy,Strategic Partner,Enter GCC renewable energy market,medium,400000,hot
+1.0,,,,,,,Sahara Fintech,OpenBank Alliance,Saudi Arabia,MENA,Fintech,Technology Partner,Launch embedded finance partnerships,high,300000,warm
+1.0,,,,,,,Lusitana Properties,EuroCapital Partners,Portugal,EU,Real Estate,Investment Partner,Source cross-border investment opportunities,medium,180000,cold
+1.0,,,,,,,Continental Foods,Andes Retail Network,Mexico,LATAM,Agribusiness,Channel Partner,Build regional retail access,high,220000,hot
+1.0,,,,,,,Gulf Trade Partners,PortLink Logistics,UAE,MENA,Logistics & Trade,Operational Partner,Improve cross-border trade execution,high,500000,warm
+1.0,medical_aesthetics,it_north_medical_aesthetics,deleo_north_italy,Lombardia,Milano,Milano,Aesthetic Technology Europe,Italian Medical Distribution Network,Italy,EU,Medical Aesthetics,Medical Distributor,Expand clinic access and device distribution,high,350000,warm
+1.0,medical_aesthetics,it_north_medical_aesthetics,deleo_north_italy,Lombardia,Milano,Milano,Aesthetic Technology Europe,Clinical Training Academy Milano,Italy,EU,Medical Aesthetics,Clinical Education Partner,Build practitioner training and clinical education network,high,120000,warm
+1.0,medical_aesthetics,it_north_medical_aesthetics,deleo_north_italy,Veneto,Verona,Verona,Aesthetic Technology Europe,Regional Aesthetic Clinic Group Veneto,Italy,EU,Medical Aesthetics,Clinic Network,Develop reference sites and multi-clinic commercial access,medium,280000,cold
+1.0,medical_aesthetics,it_north_medical_aesthetics,deleo_north_italy,Trentino-Alto Adige,Bolzano / Bozen,Bozen,Aesthetic Technology Europe,South Tyrol Clinical Education Network,Italy,EU,Medical Aesthetics,Clinical Education Partner,Develop bilingual practitioner education and local expert network,medium,110000,warm
+1.0,,,,,,,Civic Procurement Network,Institutional Technology Consortium,Brazil,LATAM,Government / Public Sector,Institutional Partner,Develop structured public-sector collaboration,medium,320000,warm
