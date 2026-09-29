@@ -1357,6 +1357,12 @@ st.download_button(
     mime="text/csv",
 )
 
+st.link_button(
+    "Open ENGAGE — Adaptive Outreach",
+    "https://outreach-sequence-generator-7dcmglcxfnmszlodg8lqre.streamlit.app/",
+    use_container_width=True,
+)
+
 with st.expander(
     "Preview Outreach Handoff"
 ):
