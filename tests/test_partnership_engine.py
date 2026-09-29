@@ -549,5 +549,45 @@ class PartnershipIntelligenceEngineTests(unittest.TestCase):
         )
 
 
+    def test_medical_aesthetics_is_supported_industry(self):
+        self.assertIn(
+            "Medical Aesthetics",
+            DEFAULT_CONFIG["industry_scores"],
+        )
+
+    def test_medical_distributor_receives_high_partner_type_fit(self):
+        opportunity = {
+            "company": "Aesthetic Technology Europe",
+            "partner": "Italian Medical Distribution Network",
+            "country": "Italy",
+            "region": "EU",
+            "industry": "Medical Aesthetics",
+            "partner_type": "Medical Distributor",
+            "strategic_goal": "Expand clinic access and device distribution",
+            "market_overlap": "high",
+            "deal_value_usd": 350000,
+            "relationship_signal": "warm",
+            "execution_complexity": "medium",
+        }
+
+        result = evaluate_partnership(opportunity)
+
+        self.assertEqual(
+            result["score_breakdown"]["raw_scores"]["partner_type_fit"],
+            100.0,
+        )
+
+    def test_clinical_education_partner_uses_specific_archetype(self):
+        archetype = classify_partnership_archetype(
+            "Clinical Education Partner",
+            "Build practitioner training and clinical education network",
+        )
+
+        self.assertEqual(
+            archetype,
+            "Clinical & Education Partnership",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
