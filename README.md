@@ -264,6 +264,25 @@ Lower execution complexity produces a stronger Execution Feasibility score.
 
 ---
 
+## Territory Partnership Context
+
+PARTNER preserves territory and vendor metadata when present in the upstream dataset.
+
+This allows Medical Aesthetics territory strategy to evaluate a parallel partner ecosystem such as:
+
+- medical distributors
+- clinic networks
+- clinical education partners
+- training academies
+- KOL / expert relationships
+- professional associations and medical societies
+
+The Streamlit application can summarize territory partners by region while keeping partnership scoring separate from account qualification.
+
+Territory metadata is also preserved in the ENGAGE handoff so partner outreach can use the same geographic context.
+
+---
+
 ## Configurable Partnership Strategy
 
 The application allows the user to dynamically adjust the partnership model.
