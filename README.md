@@ -171,6 +171,7 @@ The default configuration includes industries such as:
 - Fintech
 - Real Estate
 - Government / Public Sector
+- Medical Aesthetics
 
 Users can define priority industries directly in the application.
 
@@ -239,6 +240,11 @@ Examples supported by the model include:
 - Service Delivery Partner
 - Referral Partner
 - Consulting Partner
+- Medical Distributor
+- Clinic Network
+- Clinical Education Partner
+- Key Opinion Leader / KOL
+- Professional Association / Medical Society
 
 Users can also define priority partner types through the interface.
 
@@ -680,8 +686,11 @@ Channel Strategy
 Commercial Message
 ```
 
-The export includes fields such as:
+The export follows the shared Commercial Intelligence handoff contract and includes fields such as:
 
+- schema version
+- source stage
+- market profile ID
 - company name
 - contact name
 - country
@@ -750,6 +759,8 @@ engagement_signal
 ```
 
 The application validates the dataset before evaluation and provides an error if required commercial fields are missing.
+
+For Medical Aesthetics, the engine also recognizes a **Clinical & Education Partnership** archetype for training academies, clinical educators, KOLs and professional associations.
 
 ---
 
