@@ -37,6 +37,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "Fintech": 85,
         "Real Estate": 75,
         "Government / Public Sector": 85,
+        "Medical Aesthetics": 95,
         "Other": 50,
     },
 
@@ -71,6 +72,15 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "referral partner": 80,
         "consulting partner": 70,
         "investment partner": 80,
+        "medical distributor": 100,
+        "clinic network": 95,
+        "medical clinic network": 95,
+        "training partner": 90,
+        "clinical education partner": 90,
+        "key opinion leader": 85,
+        "kol": 85,
+        "professional association": 85,
+        "medical society": 85,
         "other": 60,
     },
 
@@ -817,6 +827,21 @@ def classify_partnership_archetype(
     if any(
         keyword in text
         for keyword in [
+            "training partner",
+            "clinical education",
+            "key opinion leader",
+            "kol",
+            "medical society",
+            "professional association",
+            "clinical educator",
+            "academy",
+        ]
+    ):
+        return "Clinical & Education Partnership"
+
+    if any(
+        keyword in text
+        for keyword in [
             "referral",
             "introducer",
             "introduction",
@@ -869,6 +894,11 @@ def recommended_partnership_model(
         "Referral Partnership": (
             "Evaluate referral, introduction "
             "or lead-sharing structure."
+        ),
+
+        "Clinical & Education Partnership": (
+            "Evaluate clinical education, training, professional-network or KOL collaboration "
+            "with clear governance, evidence standards and commercial boundaries."
         ),
 
         "Market Access Partnership": (
