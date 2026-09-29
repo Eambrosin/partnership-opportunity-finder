@@ -804,35 +804,23 @@ This architecture avoids using AI as an opaque black-box scoring engine.
 
 ## Commercial Intelligence Ecosystem
 
-The platform is positioned as the **PARTNER** stage of a broader commercial-intelligence workflow.
+The platform is positioned as the **PARTNER** stage of a parallel partnership-development track.
 
 ```text
-IDENTIFY
-Opportunity Discovery
+ACCOUNT DEVELOPMENT
+IDENTIFY → PRIORITIZE → ENGAGE
 
+PARTNERSHIP DEVELOPMENT
+IDENTIFY / Existing Partner Universe
         ↓
-
-PRIORITIZE
-Lead Qualification & Revenue Prioritization
-
+PARTNER ← YOU ARE HERE
         ↓
-
 ENGAGE
-Adaptive Outreach Intelligence
 
-        ↓
-
-PARTNER
-Partnership Intelligence
-← YOU ARE HERE
-
-        ↓
-
-EXPAND
-Global Market Entry Intelligence
+Both tracks can feed EXPAND / Territory Intelligence.
 ```
 
-The objective is to connect structured commercial logic across the Business Development lifecycle.
+The objective is to connect structured commercial logic across the Business Development lifecycle without forcing every sales lead through partnership analysis.
 
 ---
 
