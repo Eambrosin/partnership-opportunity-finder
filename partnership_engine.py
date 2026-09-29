@@ -365,6 +365,26 @@ def normalize_partnership(
             _first_value(row, ["source_stage"], "")
         ).strip(),
 
+        "territory_profile_id": str(
+            _first_value(row, ["territory_profile_id"], "")
+        ).strip(),
+
+        "vendor_profile_id": str(
+            _first_value(row, ["vendor_profile_id"], "")
+        ).strip(),
+
+        "territory_region": str(
+            _first_value(row, ["territory_region"], "")
+        ).strip(),
+
+        "territory_province": str(
+            _first_value(row, ["territory_province"], "")
+        ).strip(),
+
+        "territory_city": str(
+            _first_value(row, ["territory_city"], "")
+        ).strip(),
+
         "company": str(
             _first_value(
                 row,
