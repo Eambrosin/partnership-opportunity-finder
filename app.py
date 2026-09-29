@@ -90,6 +90,9 @@ def tier_to_outreach_tier(priority):
 def build_outreach_export(dataframe):
     outreach = pd.DataFrame()
 
+    outreach["schema_version"] = "1.0"
+    outreach["source_stage"] = "PARTNER"
+    outreach["market_profile_id"] = dataframe.get("market_profile_id", "")
     outreach["company_name"] = dataframe["partner"]
     outreach["contact_name"] = dataframe.get(
         "contact_name",
@@ -173,8 +176,8 @@ The platform uses a deterministic and explainable scoring engine.
 )
 
 st.info(
-    "PARTNER stage of the Commercial Intelligence ecosystem: "
-    "IDENTIFY → PRIORITIZE → ENGAGE → PARTNER → EXPAND"
+    "PARTNER is a parallel Commercial Intelligence track: "
+    "IDENTIFY / Partner Universe → PARTNER → ENGAGE, feeding EXPAND alongside the account-development path."
 )
 
 
