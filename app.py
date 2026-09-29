@@ -93,6 +93,11 @@ def build_outreach_export(dataframe):
     outreach["schema_version"] = "1.0"
     outreach["source_stage"] = "PARTNER"
     outreach["market_profile_id"] = dataframe.get("market_profile_id", "")
+    outreach["territory_profile_id"] = dataframe.get("territory_profile_id", "")
+    outreach["vendor_profile_id"] = dataframe.get("vendor_profile_id", "")
+    outreach["territory_region"] = dataframe.get("territory_region", "")
+    outreach["territory_province"] = dataframe.get("territory_province", "")
+    outreach["territory_city"] = dataframe.get("territory_city", "")
     outreach["company_name"] = dataframe["partner"]
     outreach["contact_name"] = dataframe.get(
         "contact_name",
@@ -579,6 +584,64 @@ if df.empty:
     )
 
     st.stop()
+
+
+territory_partners = df[
+    df.get("territory_profile_id", pd.Series([""] * len(df)))
+    .fillna("")
+    .astype(str)
+    .str.strip()
+    != ""
+].copy()
+
+if not territory_partners.empty:
+    st.subheader("🗺️ Territory Partnership View")
+    tp1, tp2, tp3, tp4 = st.columns(4)
+    tp1.metric("Territory Partners", len(territory_partners))
+    tp2.metric(
+        "High Priority",
+        int((territory_partners["priority_level"] == "High").sum()),
+    )
+    tp3.metric(
+        "Channel / Distribution",
+        int(
+            territory_partners["partnership_archetype"]
+            .astype(str)
+            .eq("Channel Partnership")
+            .sum()
+        ),
+    )
+    tp4.metric(
+        "Clinical / Education",
+        int(
+            territory_partners["partnership_archetype"]
+            .astype(str)
+            .eq("Clinical & Education Partnership")
+            .sum()
+        ),
+    )
+
+    if "territory_region" in territory_partners.columns:
+        territory_partner_summary = (
+            territory_partners.groupby("territory_region", dropna=False)
+            .agg(
+                partners=("partner", "count"),
+                high_priority=(
+                    "priority_level",
+                    lambda values: int((values == "High").sum()),
+                ),
+                average_fit=("partnership_fit_score", "mean"),
+            )
+            .reset_index()
+        )
+        territory_partner_summary["average_fit"] = (
+            territory_partner_summary["average_fit"].round(1)
+        )
+        st.dataframe(
+            territory_partner_summary,
+            use_container_width=True,
+            hide_index=True,
+        )
 
 
 # ============================================================
@@ -1254,6 +1317,14 @@ st.dataframe(
 # ============================================================
 
 export_columns = [
+    "schema_version",
+    "source_stage",
+    "market_profile_id",
+    "territory_profile_id",
+    "vendor_profile_id",
+    "territory_region",
+    "territory_province",
+    "territory_city",
     "company",
     "partner",
     "contact_name",
@@ -1448,6 +1519,14 @@ with profile_col_1:
         f"**Region:** "
         f"{selected_row['region']}"
     )
+
+    if str(selected_row.get("territory_profile_id", "")).strip():
+        st.write(
+            f"**Territory:** "
+            f"{selected_row.get('territory_region', '')} · "
+            f"{selected_row.get('territory_province', '')} · "
+            f"{selected_row.get('territory_city', '')}"
+        )
 
 
 with profile_col_2:
