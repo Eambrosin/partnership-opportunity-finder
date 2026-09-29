@@ -353,6 +353,18 @@ def normalize_partnership(
 ) -> Dict[str, Any]:
 
     return {
+        "schema_version": str(
+            _first_value(row, ["schema_version"], "1.0")
+        ).strip(),
+
+        "market_profile_id": str(
+            _first_value(row, ["market_profile_id"], "")
+        ).strip(),
+
+        "source_stage": str(
+            _first_value(row, ["source_stage"], "")
+        ).strip(),
+
         "company": str(
             _first_value(
                 row,
