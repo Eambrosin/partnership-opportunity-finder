@@ -589,5 +589,37 @@ class PartnershipIntelligenceEngineTests(unittest.TestCase):
         )
 
 
+    def test_territory_metadata_survives_partnership_ranking(self):
+        opportunity = {
+            "schema_version": "1.0",
+            "market_profile_id": "medical_aesthetics",
+            "territory_profile_id": "it_north_medical_aesthetics",
+            "vendor_profile_id": "deleo_north_italy",
+            "territory_region": "Lombardia",
+            "territory_province": "Milano",
+            "territory_city": "Milano",
+            "company": "Aesthetic Technology Europe",
+            "partner": "Clinical Training Academy Milano",
+            "country": "Italy",
+            "region": "EU",
+            "industry": "Medical Aesthetics",
+            "partner_type": "Clinical Education Partner",
+            "strategic_goal": "Build practitioner training network",
+            "market_overlap": "high",
+            "deal_value_usd": 120000,
+            "relationship_signal": "warm",
+            "execution_complexity": "medium",
+        }
+
+        ranked = rank_partnerships(pd.DataFrame([opportunity]))
+        row = ranked.iloc[0]
+
+        self.assertEqual(row["territory_profile_id"], "it_north_medical_aesthetics")
+        self.assertEqual(row["vendor_profile_id"], "deleo_north_italy")
+        self.assertEqual(row["territory_region"], "Lombardia")
+        self.assertEqual(row["territory_province"], "Milano")
+        self.assertEqual(row["partnership_archetype"], "Clinical & Education Partnership")
+
+
 if __name__ == "__main__":
     unittest.main()
