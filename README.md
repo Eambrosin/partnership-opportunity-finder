@@ -2,13 +2,14 @@
 
 > A configurable and explainable decision-support platform for identifying, scoring and prioritizing strategic partnership opportunities.
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)]()
-[![Streamlit](https://img.shields.io/badge/Streamlit-App-red)]()
+[![Live App](https://img.shields.io/badge/Live%20App-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://partnership-opportunity-finder-eambrosin.streamlit.app/)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white)
+![Commercial Intelligence](https://img.shields.io/badge/Commercial%20Intelligence-PARTNER-8250df)
 [![Python CI](https://github.com/Eambrosin/partnership-opportunity-finder/actions/workflows/ci.yml/badge.svg)](https://github.com/Eambrosin/partnership-opportunity-finder/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey)]()
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
-🔗 **Live Demo:**  
-https://partnership-opportunity-finder-eambrosin.streamlit.app/
+**[Launch the live application](https://partnership-opportunity-finder-eambrosin.streamlit.app/)**
 
 ---
 
