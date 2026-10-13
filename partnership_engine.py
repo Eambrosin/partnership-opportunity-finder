@@ -5,6 +5,8 @@ from typing import Any, Dict, Iterable, Mapping, Optional
 
 import pandas as pd
 
+from commercial_mandate import mandate_from_mapping
+
 
 # ============================================================
 # DEFAULT CONFIGURATION
@@ -352,7 +354,7 @@ def normalize_partnership(
     row: Mapping[str, Any],
 ) -> Dict[str, Any]:
 
-    return {
+    normalized = {
         "schema_version": str(
             _first_value(row, ["schema_version"], "1.0")
         ).strip(),
@@ -551,6 +553,9 @@ def normalize_partnership(
             )
         ).strip(),
     }
+
+    normalized.update(mandate_from_mapping(row))
+    return normalized
 
 
 # ============================================================
