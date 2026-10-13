@@ -514,6 +514,50 @@ def normalize_partnership(
             )
         ),
 
+        "geographic_coverage": str(
+            _first_value(row, ["geographic_coverage"], "")
+        ).strip(),
+
+        "customer_base_fit": str(
+            _first_value(row, ["customer_base_fit"], "")
+        ).strip(),
+
+        "technical_service_capability": str(
+            _first_value(row, ["technical_service_capability"], "")
+        ).strip(),
+
+        "after_sales_capability": str(
+            _first_value(row, ["after_sales_capability"], "")
+        ).strip(),
+
+        "import_capability": str(
+            _first_value(row, ["import_capability"], "")
+        ).strip(),
+
+        "regulatory_capability": str(
+            _first_value(row, ["regulatory_capability"], "")
+        ).strip(),
+
+        "sales_force_capability": str(
+            _first_value(row, ["sales_force_capability"], "")
+        ).strip(),
+
+        "financial_capacity": str(
+            _first_value(row, ["financial_capacity"], "")
+        ).strip(),
+
+        "management_commitment": str(
+            _first_value(row, ["management_commitment"], "")
+        ).strip(),
+
+        "exclusivity_conflict": str(
+            _first_value(row, ["exclusivity_conflict"], "")
+        ).strip(),
+
+        "pilot_willingness": str(
+            _first_value(row, ["pilot_willingness"], "")
+        ).strip(),
+
         "source_score": _first_value(
             row,
             [
@@ -1288,6 +1332,79 @@ def outreach_handoff_context(
     )
 
 
+def route_to_market_readiness(
+    partnership: Mapping[str, Any],
+) -> Dict[str, Any]:
+    normalized = normalize_partnership(partnership)
+
+    fields = {
+        "Geographic coverage": normalized.get("geographic_coverage", ""),
+        "Relevant customer base": normalized.get("customer_base_fit", ""),
+        "Technical service": normalized.get("technical_service_capability", ""),
+        "After-sales capability": normalized.get("after_sales_capability", ""),
+        "Import capability": normalized.get("import_capability", ""),
+        "Regulatory capability": normalized.get("regulatory_capability", ""),
+        "Sales force": normalized.get("sales_force_capability", ""),
+        "Financial capacity": normalized.get("financial_capacity", ""),
+        "Management commitment": normalized.get("management_commitment", ""),
+        "Pilot willingness": normalized.get("pilot_willingness", ""),
+    }
+
+    score_map = {
+        "high": 100.0,
+        "strong": 100.0,
+        "yes": 100.0,
+        "verified": 100.0,
+        "medium": 70.0,
+        "partial": 70.0,
+        "in review": 60.0,
+        "low": 35.0,
+        "weak": 35.0,
+        "no": 20.0,
+        "unknown": 50.0,
+        "to verify": 50.0,
+    }
+
+    observed_scores = []
+    gaps = []
+
+    for label, value in fields.items():
+        key = _normalized_key(value)
+        if not key:
+            gaps.append(label)
+            continue
+        observed_scores.append(score_map.get(key, 55.0))
+
+    conflict = _normalized_key(normalized.get("exclusivity_conflict", ""))
+    if conflict in {"yes", "high", "confirmed"}:
+        observed_scores.append(20.0)
+    elif conflict in {"no", "none", "clear"}:
+        observed_scores.append(100.0)
+    elif not conflict:
+        gaps.append("Exclusivity conflict")
+
+    if not observed_scores:
+        return {
+            "route_to_market_readiness_score": None,
+            "route_to_market_readiness_status": "Not Yet Assessed",
+            "route_to_market_gaps": " | ".join(gaps),
+        }
+
+    score = round(sum(observed_scores) / len(observed_scores), 1)
+    if score >= 80:
+        status = "Strong Route-to-Market Readiness"
+    elif score >= 60:
+        status = "Promising — Validate Remaining Gaps"
+    else:
+        status = "Execution Risk — Deeper Due Diligence Required"
+
+    return {
+        "route_to_market_readiness_score": score,
+        "route_to_market_readiness_status": status,
+        "route_to_market_gaps": " | ".join(gaps),
+    }
+
+
 # ============================================================
 # SINGLE PARTNERSHIP EVALUATION
 # ============================================================
@@ -1378,6 +1495,8 @@ def evaluate_partnership(
         archetype,
     )
 
+    readiness = route_to_market_readiness(normalized)
+
     return {
         **normalized,
 
@@ -1404,6 +1523,7 @@ def evaluate_partnership(
         "score_breakdown": components,
 
         "outreach_handoff_context": handoff,
+        **readiness,
     }
 
 
