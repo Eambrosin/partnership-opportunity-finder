@@ -17,7 +17,7 @@ from partnership_engine import (
 # ============================================================
 
 st.set_page_config(
-    page_title="Partnership Intelligence Platform",
+    page_title="Route-to-Market & Partner Intelligence",
     page_icon="🤝",
     layout="wide",
 )
@@ -171,12 +171,11 @@ def build_outreach_export(dataframe):
 # HEADER
 # ============================================================
 
-st.title("🤝 Partnership Intelligence Platform")
+st.title("🤝 Route-to-Market & Partner Intelligence")
 
 st.caption(
-    "Configurable Partnership Scoring · Strategic Fit · "
-    "Market Access · Partnership Archetypes · "
-    "Commercial Prioritization · Outreach Handoff"
+    "Partner Qualification · Market Access · Route-to-Market Readiness · "
+    "Execution Feasibility · Commercial Prioritization · ENGAGE Handoff"
 )
 
 st.markdown(
@@ -1765,6 +1764,24 @@ with intelligence_col_2:
             "partnership_thesis"
         ],
         "🤝",
+    )
+
+    render_card(
+        "Route-to-Market Readiness",
+        (
+            f"{selected_row.get('route_to_market_readiness_status', 'Not Yet Assessed')}"
+            + (
+                f"\n\nScore: {selected_row.get('route_to_market_readiness_score')}/100"
+                if pd.notna(selected_row.get('route_to_market_readiness_score'))
+                else ""
+            )
+            + (
+                f"\n\nGaps: {selected_row.get('route_to_market_gaps', '')}"
+                if str(selected_row.get('route_to_market_gaps', '') or '').strip()
+                else ""
+            )
+        ),
+        "🛠️",
     )
 
     render_card(
