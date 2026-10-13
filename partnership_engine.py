@@ -1370,7 +1370,7 @@ def route_to_market_readiness(
 
     for label, value in fields.items():
         key = _normalized_key(value)
-        if not key:
+        if not key or key in {"unknown", "to verify", "not assessed"}:
             gaps.append(label)
             continue
         observed_scores.append(score_map.get(key, 55.0))
@@ -1380,7 +1380,7 @@ def route_to_market_readiness(
         observed_scores.append(20.0)
     elif conflict in {"no", "none", "clear"}:
         observed_scores.append(100.0)
-    elif not conflict:
+    elif not conflict or conflict in {"unknown", "to verify", "not assessed"}:
         gaps.append("Exclusivity conflict")
 
     if not observed_scores:
