@@ -9,6 +9,7 @@ from partnership_engine import (
     evaluate_partnership,
     normalize_weights,
     rank_partnerships,
+    route_to_market_readiness,
     validate_partnership_dataframe,
 )
 
@@ -78,6 +79,33 @@ class PartnershipIntelligenceEngineTests(unittest.TestCase):
         self.assertEqual(
             result["priority_level"],
             "High",
+        )
+
+    def test_route_to_market_readiness_uses_execution_capabilities(self):
+        candidate = {
+            **self.channel_partnership,
+            "geographic_coverage": "high",
+            "customer_base_fit": "high",
+            "technical_service_capability": "medium",
+            "after_sales_capability": "high",
+            "import_capability": "high",
+            "regulatory_capability": "medium",
+            "sales_force_capability": "high",
+            "financial_capacity": "medium",
+            "management_commitment": "high",
+            "pilot_willingness": "yes",
+            "exclusivity_conflict": "no",
+        }
+
+        readiness = route_to_market_readiness(candidate)
+
+        self.assertGreaterEqual(
+            readiness["route_to_market_readiness_score"],
+            70,
+        )
+        self.assertNotEqual(
+            readiness["route_to_market_readiness_status"],
+            "Not Yet Assessed",
         )
 
     def test_operational_partner_is_classified_correctly(self):
