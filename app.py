@@ -2,6 +2,8 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+from commercial_mandate import MANDATE_FIELDS, has_mandate_context, mandate_summary
+
 from partnership_engine import (
     DEFAULT_CONFIG,
     build_runtime_config,
@@ -153,6 +155,10 @@ def build_outreach_export(dataframe):
         "strategic_goal"
     ]
 
+    for field in MANDATE_FIELDS:
+        if field in dataframe.columns:
+            outreach[field] = dataframe[field]
+
     return outreach
 
 
@@ -235,6 +241,14 @@ else:
         )
 
         st.stop()
+
+
+if not source_df.empty and has_mandate_context(source_df.iloc[0].to_dict()):
+    st.info(
+        "**Commercial Mandate:** "
+        + mandate_summary(source_df.iloc[0].to_dict())
+        + "  \\nPartnership evaluation is anchored to this mandate."
+    )
 
 
 # ============================================================
@@ -1430,7 +1444,7 @@ st.download_button(
 
 st.link_button(
     "Open ENGAGE — Adaptive Outreach",
-    "https://outreach-sequence-generator-7dcmglcxfnmszlodg8lqre.streamlit.app/",
+    "https://outreach-sequence-generator-eambrosin.streamlit.app/",
     use_container_width=True,
 )
 
