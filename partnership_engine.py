@@ -6,6 +6,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional
 import pandas as pd
 
 from commercial_mandate import mandate_from_mapping
+from trade_feasibility import feasibility_from_mapping
 
 
 # ============================================================
@@ -555,6 +556,7 @@ def normalize_partnership(
     }
 
     normalized.update(mandate_from_mapping(row))
+    normalized.update(feasibility_from_mapping(row))
     return normalized
 
 
