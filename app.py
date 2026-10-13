@@ -3,6 +3,7 @@ import plotly.express as px
 import streamlit as st
 
 from commercial_mandate import MANDATE_FIELDS, has_mandate_context, mandate_summary
+from trade_feasibility import TRADE_FEASIBILITY_FIELDS
 
 from partnership_engine import (
     DEFAULT_CONFIG,
@@ -156,6 +157,10 @@ def build_outreach_export(dataframe):
     ]
 
     for field in MANDATE_FIELDS:
+        if field in dataframe.columns:
+            outreach[field] = dataframe[field]
+
+    for field in TRADE_FEASIBILITY_FIELDS:
         if field in dataframe.columns:
             outreach[field] = dataframe[field]
 
