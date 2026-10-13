@@ -114,6 +114,8 @@ Combines company context, partnership thesis, fit assessment, recommended model 
 - executive dashboard
 - opportunity mapping
 - partnership brief / handoff
+- interactive Route-to-Market Due Diligence
+- explicit due-diligence gap tracking
 - CSV input compatibility
 - automated tests and GitHub Actions CI
 - full-history secret scanning
@@ -168,6 +170,30 @@ Beyond strategic fit, PARTNER can now evaluate practical route-to-market readine
 When these fields are available, the app produces a separate **Route-to-Market Readiness** assessment and explicit due-diligence gaps.
 
 This does not replace partner due diligence. It helps distinguish a commercially interesting partner from one that can realistically support execution.
+
+---
+
+## Interactive Due Diligence Workspace
+
+The selected partner can be assessed directly inside the app using a Route-to-Market Due Diligence workspace.
+
+The workspace captures evidence around:
+
+- geographic coverage
+- relevant customer base
+- sales-force capability
+- import capability
+- financial capacity
+- technical-service capability
+- after-sales capability
+- regulatory / market-entry capability
+- management commitment
+- pilot / market-development willingness
+- competing representation or exclusivity conflicts
+
+Unknown values remain outside the readiness score and are surfaced as explicit gaps.
+
+The enriched partner record can be exported for continued validation or downstream engagement.
 
 ---
 
