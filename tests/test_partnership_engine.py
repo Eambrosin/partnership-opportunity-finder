@@ -81,6 +81,36 @@ class PartnershipIntelligenceEngineTests(unittest.TestCase):
             "High",
         )
 
+    def test_unknown_route_to_market_inputs_do_not_create_false_score(self):
+        candidate = {
+            **self.channel_partnership,
+            "geographic_coverage": "Unknown",
+            "customer_base_fit": "Unknown",
+            "technical_service_capability": "Unknown",
+            "after_sales_capability": "Unknown",
+            "import_capability": "Unknown",
+            "regulatory_capability": "Unknown",
+            "sales_force_capability": "Unknown",
+            "financial_capacity": "Unknown",
+            "management_commitment": "Unknown",
+            "pilot_willingness": "Unknown",
+            "exclusivity_conflict": "Unknown",
+        }
+
+        readiness = route_to_market_readiness(candidate)
+
+        self.assertIsNone(
+            readiness["route_to_market_readiness_score"]
+        )
+        self.assertEqual(
+            readiness["route_to_market_readiness_status"],
+            "Not Yet Assessed",
+        )
+        self.assertIn(
+            "Technical service",
+            readiness["route_to_market_gaps"],
+        )
+
     def test_route_to_market_readiness_uses_execution_capabilities(self):
         candidate = {
             **self.channel_partnership,
