@@ -9,6 +9,7 @@ from partnership_engine import (
     DEFAULT_CONFIG,
     build_runtime_config,
     rank_partnerships,
+    route_to_market_readiness,
 )
 
 
@@ -1502,6 +1503,181 @@ selected_index = selection_map[
 selected_row = df.loc[
     selected_index
 ]
+
+st.divider()
+st.subheader("🛠️ Route-to-Market Due Diligence Workspace")
+st.caption(
+    "Assess whether a commercially interesting partner can actually support market entry. "
+    "Use evidence from conversations, public sources or verified partner information; unknowns remain explicit."
+)
+
+due_key = (
+    "route_to_market_due::"
+    + str(selected_row.get("partner", "")).strip().lower().replace(" ", "_")
+)
+
+capability_options = ["Unknown", "Low", "Medium", "High"]
+
+with st.form(
+    "route_to_market_due_form::"
+    + str(selected_row.get("partner", "")).strip().lower().replace(" ", "_")
+):
+    due_1, due_2 = st.columns(2)
+
+    with due_1:
+        geographic_coverage = st.selectbox(
+            "Geographic coverage",
+            capability_options,
+            index=0,
+        )
+        customer_base_fit = st.selectbox(
+            "Relevant customer base",
+            capability_options,
+            index=0,
+        )
+        sales_force_capability = st.selectbox(
+            "Sales-force capability",
+            capability_options,
+            index=0,
+        )
+        import_capability = st.selectbox(
+            "Import capability",
+            capability_options,
+            index=0,
+        )
+        financial_capacity = st.selectbox(
+            "Financial capacity",
+            capability_options,
+            index=0,
+        )
+
+    with due_2:
+        technical_service_capability = st.selectbox(
+            "Technical-service capability",
+            capability_options,
+            index=0,
+        )
+        after_sales_capability = st.selectbox(
+            "After-sales capability",
+            capability_options,
+            index=0,
+        )
+        regulatory_capability = st.selectbox(
+            "Regulatory / market-entry capability",
+            capability_options,
+            index=0,
+        )
+        management_commitment = st.selectbox(
+            "Management commitment",
+            capability_options,
+            index=0,
+        )
+        pilot_willingness = st.selectbox(
+            "Pilot / market-development willingness",
+            ["Unknown", "No", "Yes"],
+            index=0,
+        )
+
+    exclusivity_conflict = st.selectbox(
+        "Conflicting exclusivity / competing representation",
+        ["Unknown", "No", "Yes"],
+        index=0,
+    )
+    due_diligence_notes = st.text_area(
+        "Due-diligence notes / evidence",
+        height=90,
+        placeholder=(
+            "Customer portfolio, service organization, existing brands, import experience, "
+            "coverage, management commitment, open verification questions..."
+        ),
+    )
+
+    save_due = st.form_submit_button(
+        "Save Route-to-Market Assessment",
+        type="primary",
+        use_container_width=True,
+    )
+
+if save_due:
+    due_record = {
+        "geographic_coverage": geographic_coverage,
+        "customer_base_fit": customer_base_fit,
+        "technical_service_capability": technical_service_capability,
+        "after_sales_capability": after_sales_capability,
+        "import_capability": import_capability,
+        "regulatory_capability": regulatory_capability,
+        "sales_force_capability": sales_force_capability,
+        "financial_capacity": financial_capacity,
+        "management_commitment": management_commitment,
+        "exclusivity_conflict": exclusivity_conflict,
+        "pilot_willingness": pilot_willingness,
+        "route_to_market_due_diligence_notes": due_diligence_notes,
+    }
+    readiness = route_to_market_readiness(
+        {
+            **selected_row.to_dict(),
+            **due_record,
+        }
+    )
+    st.session_state[due_key] = {
+        **due_record,
+        **readiness,
+    }
+
+saved_due = st.session_state.get(due_key)
+
+if saved_due:
+    selected_row = pd.Series(
+        {
+            **selected_row.to_dict(),
+            **saved_due,
+        }
+    )
+
+    rtm1, rtm2, rtm3 = st.columns(3)
+    rtm1.metric(
+        "Route-to-Market Readiness",
+        selected_row.get(
+            "route_to_market_readiness_status",
+            "Not Yet Assessed",
+        ),
+    )
+    readiness_score = selected_row.get(
+        "route_to_market_readiness_score"
+    )
+    rtm2.metric(
+        "Readiness Score",
+        (
+            f"{float(readiness_score):.0f}/100"
+            if pd.notna(readiness_score)
+            else "N/A"
+        ),
+    )
+    rtm3.metric(
+        "Open Gaps",
+        len(
+            [
+                item
+                for item in str(
+                    selected_row.get("route_to_market_gaps", "")
+                ).split(" | ")
+                if item.strip()
+            ]
+        ),
+    )
+
+    enriched_partner = {
+        **selected_row.to_dict(),
+    }
+    st.download_button(
+        "⬇ Download Enriched Partner Due Diligence",
+        pd.DataFrame([enriched_partner])
+        .to_csv(index=False)
+        .encode("utf-8"),
+        file_name="partner_route_to_market_due_diligence.csv",
+        mime="text/csv",
+        use_container_width=True,
+    )
 
 
 # ============================================================
