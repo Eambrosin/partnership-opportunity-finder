@@ -2,6 +2,8 @@
 
 ### Explainable Partnership Scoring | Strategic Fit | Market Access | Execution Feasibility
 
+**Operational focus:** Route-to-Market & Partner Intelligence
+
 [![Live App](https://img.shields.io/badge/Live%20App-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://partnership-opportunity-finder-eambrosin.streamlit.app/)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white)
@@ -9,7 +11,7 @@
 [![Python CI](https://github.com/Eambrosin/partnership-opportunity-finder/actions/workflows/ci.yml/badge.svg)](https://github.com/Eambrosin/partnership-opportunity-finder/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
-A Commercial Intelligence application for evaluating, ranking and operationalizing strategic partnership opportunities using transparent scoring, market-access signals and execution feasibility.
+A Commercial Intelligence application for evaluating, ranking and operationalizing distributors, sales agents, technical partners and other route-to-market relationships using transparent scoring, market-access signals and execution feasibility.
 
 > **A strategically attractive partner is not automatically an executable partnership.**
 
@@ -144,6 +146,28 @@ Does the organization fit the intended partnership motion?
 Can both sides realistically operationalize the relationship?
 
 Weights remain configurable so the model can reflect the partnership strategy rather than impose a universal formula.
+
+---
+
+## Route-to-Market Readiness
+
+Beyond strategic fit, PARTNER can now evaluate practical route-to-market readiness using optional evidence around:
+
+- geographic coverage
+- relevant customer base
+- technical-service capability
+- after-sales capability
+- import capability
+- regulatory capability
+- sales-force capability
+- financial capacity
+- management commitment
+- pilot willingness
+- exclusivity conflicts
+
+When these fields are available, the app produces a separate **Route-to-Market Readiness** assessment and explicit due-diligence gaps.
+
+This does not replace partner due diligence. It helps distinguish a commercially interesting partner from one that can realistically support execution.
 
 ---
 
@@ -285,7 +309,7 @@ It does not replace:
 
 ## Portfolio Context
 
-This project is the **PARTNER** layer of the Commercial Intelligence portfolio:
+This project is the **PARTNER / ROUTE-TO-MARKET** layer of the Commercial Intelligence portfolio:
 
 ```text
 IDENTIFY / Partner Universe → PARTNER → ENGAGE
