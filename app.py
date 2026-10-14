@@ -236,6 +236,12 @@ if uploaded is not None:
             uploaded
         )
 
+        if mandate_override:
+            source_df = apply_mandate_fields(
+                source_df,
+                mandate_override,
+            )
+
         st.success(
             f"Loaded {len(source_df)} partnership opportunities."
         )
@@ -254,6 +260,12 @@ else:
         source_df = pd.read_csv(
             "data/sample_partnerships.csv"
         )
+
+        if mandate_override:
+            source_df = apply_mandate_fields(
+                source_df,
+                mandate_override,
+            )
 
         st.caption(
             "Using the demonstration partnership dataset."
