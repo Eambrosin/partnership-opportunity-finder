@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+from mandate_workspace import render_mandate_workspace
 from commercial_mandate import (
     MANDATE_FIELDS,
     apply_mandate_fields,
@@ -223,6 +224,12 @@ if mandate_file is not None:
     except Exception as exc:
         st.error(f"Could not load Commercial Mandate: {exc}")
 
+
+render_mandate_workspace(
+    st,
+    "PARTNER",
+    mandate_override,
+)
 
 uploaded = st.file_uploader(
     "Upload Partnerships CSV",
