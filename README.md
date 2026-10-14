@@ -15,6 +15,8 @@ A Commercial Intelligence application for evaluating, ranking and operationalizi
 
 > **A strategically attractive partner is not automatically an executable partnership.**
 
+A portable **Commercial Mandate JSON** can be loaded to keep client, corridor, product, target market and commercial-objective context consistent with IDENTIFY, PRIORITIZE and ENGAGE.
+
 **[Launch the live application](https://partnership-opportunity-finder-eambrosin.streamlit.app/)**
 
 ---
