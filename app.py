@@ -2,7 +2,13 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from commercial_mandate import MANDATE_FIELDS, has_mandate_context, mandate_summary
+from commercial_mandate import (
+    MANDATE_FIELDS,
+    apply_mandate_fields,
+    has_mandate_context,
+    mandate_from_json,
+    mandate_summary,
+)
 from trade_feasibility import TRADE_FEASIBILITY_FIELDS
 
 from partnership_engine import (
