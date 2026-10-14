@@ -39,6 +39,26 @@ The platform turns partnership evaluation into an explainable decision workflow.
 
 ---
 
+## Ambrosin Mandate Workspace
+
+PARTNER operates as the route-to-market branch of the shared **Commercial Mandate Workspace**.
+
+A mandate can be loaded as portable JSON or inherited from the partner pipeline. This keeps the same client, corridor, product, target market and route-to-market objective attached to partner evaluation.
+
+Recommended progression:
+
+```text
+IDENTIFY / Partner Universe
+          ↓
+       PARTNER
+          ↓
+        ENGAGE
+          ↓
+Opportunity / Mandate Reporting
+```
+
+---
+
 ## Partnership Workflow
 
 ```text
