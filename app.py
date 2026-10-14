@@ -199,8 +199,8 @@ The platform uses a deterministic and explainable scoring engine.
 )
 
 st.info(
-    "PARTNER is a parallel Commercial Intelligence track: "
-    "IDENTIFY / Partner Universe → PARTNER → ENGAGE, feeding EXPAND alongside the account-development path."
+    "PARTNER is the route-to-market branch of the shared Commercial Mandate: "
+    "IDENTIFY / Partner Universe → PARTNER → ENGAGE → Opportunity / Mandate Reporting."
 )
 
 
@@ -224,12 +224,6 @@ if mandate_file is not None:
     except Exception as exc:
         st.error(f"Could not load Commercial Mandate: {exc}")
 
-
-render_mandate_workspace(
-    st,
-    "PARTNER",
-    mandate_override,
-)
 
 uploaded = st.file_uploader(
     "Upload Partnerships CSV",
@@ -287,6 +281,20 @@ else:
 
         st.stop()
 
+
+workspace_mandate = (
+    mandate_override
+    or (
+        source_df.iloc[0].to_dict()
+        if not source_df.empty
+        else {}
+    )
+)
+render_mandate_workspace(
+    st,
+    "PARTNER",
+    workspace_mandate,
+)
 
 if not source_df.empty and has_mandate_context(source_df.iloc[0].to_dict()):
     st.info(
