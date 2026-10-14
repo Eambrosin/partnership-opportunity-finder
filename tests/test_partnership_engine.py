@@ -138,6 +138,41 @@ class PartnershipIntelligenceEngineTests(unittest.TestCase):
             "Not Yet Assessed",
         )
 
+    def test_industrial_service_capabilities_are_included_in_readiness(self):
+        candidate = {
+            **self.channel_partnership,
+            "geographic_coverage": "high",
+            "customer_base_fit": "high",
+            "technical_service_capability": "high",
+            "after_sales_capability": "high",
+            "installation_commissioning_capability": "high",
+            "spare_parts_capability": "medium",
+            "field_service_coverage": "high",
+            "industrial_reference_base": "high",
+            "import_capability": "high",
+            "regulatory_capability": "medium",
+            "sales_force_capability": "high",
+            "financial_capacity": "medium",
+            "management_commitment": "high",
+            "pilot_willingness": "yes",
+            "exclusivity_conflict": "no",
+        }
+
+        readiness = route_to_market_readiness(candidate)
+
+        self.assertGreaterEqual(
+            readiness["route_to_market_readiness_score"],
+            75,
+        )
+        self.assertNotIn(
+            "Installation / commissioning",
+            readiness["route_to_market_gaps"],
+        )
+        self.assertNotIn(
+            "Spare-parts capability",
+            readiness["route_to_market_gaps"],
+        )
+
     def test_operational_partner_is_classified_correctly(self):
 
         archetype = classify_partnership_archetype(
