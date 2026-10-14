@@ -1595,6 +1595,28 @@ with st.form(
             capability_options,
             index=0,
         )
+        installation_commissioning_capability = st.selectbox(
+            "Installation / commissioning capability",
+            capability_options,
+            index=0,
+            help="Especially relevant for industrial machinery and equipment mandates.",
+        )
+        spare_parts_capability = st.selectbox(
+            "Spare-parts capability",
+            capability_options,
+            index=0,
+        )
+        field_service_coverage = st.selectbox(
+            "Field-service coverage",
+            capability_options,
+            index=0,
+        )
+        industrial_reference_base = st.selectbox(
+            "Industrial reference base",
+            capability_options,
+            index=0,
+            help="Evidence of relevant installed base, industrial customers or comparable projects.",
+        )
         regulatory_capability = st.selectbox(
             "Regulatory / market-entry capability",
             capability_options,
@@ -1620,8 +1642,8 @@ with st.form(
         "Due-diligence notes / evidence",
         height=90,
         placeholder=(
-            "Customer portfolio, service organization, existing brands, import experience, "
-            "coverage, management commitment, open verification questions..."
+            "Customer portfolio, installed base, service technicians, commissioning capability, "
+            "spare-parts model, existing brands, import experience, coverage and open questions..."
         ),
     )
 
@@ -1637,6 +1659,10 @@ if save_due:
         "customer_base_fit": customer_base_fit,
         "technical_service_capability": technical_service_capability,
         "after_sales_capability": after_sales_capability,
+        "installation_commissioning_capability": installation_commissioning_capability,
+        "spare_parts_capability": spare_parts_capability,
+        "field_service_coverage": field_service_coverage,
+        "industrial_reference_base": industrial_reference_base,
         "import_capability": import_capability,
         "regulatory_capability": regulatory_capability,
         "sales_force_capability": sales_force_capability,
