@@ -159,6 +159,10 @@ Beyond strategic fit, PARTNER can now evaluate practical route-to-market readine
 - relevant customer base
 - technical-service capability
 - after-sales capability
+- installation / commissioning capability
+- spare-parts capability
+- field-service coverage
+- industrial reference base
 - import capability
 - regulatory capability
 - sales-force capability
