@@ -530,6 +530,22 @@ def normalize_partnership(
             _first_value(row, ["after_sales_capability"], "")
         ).strip(),
 
+        "installation_commissioning_capability": str(
+            _first_value(row, ["installation_commissioning_capability"], "")
+        ).strip(),
+
+        "spare_parts_capability": str(
+            _first_value(row, ["spare_parts_capability"], "")
+        ).strip(),
+
+        "field_service_coverage": str(
+            _first_value(row, ["field_service_coverage"], "")
+        ).strip(),
+
+        "industrial_reference_base": str(
+            _first_value(row, ["industrial_reference_base"], "")
+        ).strip(),
+
         "import_capability": str(
             _first_value(row, ["import_capability"], "")
         ).strip(),
@@ -1342,6 +1358,13 @@ def route_to_market_readiness(
         "Relevant customer base": normalized.get("customer_base_fit", ""),
         "Technical service": normalized.get("technical_service_capability", ""),
         "After-sales capability": normalized.get("after_sales_capability", ""),
+        "Installation / commissioning": normalized.get(
+            "installation_commissioning_capability",
+            "",
+        ),
+        "Spare-parts capability": normalized.get("spare_parts_capability", ""),
+        "Field-service coverage": normalized.get("field_service_coverage", ""),
+        "Industrial reference base": normalized.get("industrial_reference_base", ""),
         "Import capability": normalized.get("import_capability", ""),
         "Regulatory capability": normalized.get("regulatory_capability", ""),
         "Sales force": normalized.get("sales_force_capability", ""),
