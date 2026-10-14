@@ -209,6 +209,21 @@ st.info(
 
 st.subheader("📂 Partnership Pipeline")
 
+mandate_file = st.file_uploader(
+    "Optional Commercial Mandate JSON",
+    type=["json"],
+    key="commercial_mandate_json",
+    help="Reuse the same client, corridor, product and objective context across the workflow.",
+)
+mandate_override = {}
+if mandate_file is not None:
+    try:
+        mandate_override = mandate_from_json(mandate_file.getvalue())
+        st.success("Commercial Mandate loaded.")
+    except Exception as exc:
+        st.error(f"Could not load Commercial Mandate: {exc}")
+
+
 uploaded = st.file_uploader(
     "Upload Partnerships CSV",
     type=["csv"],
