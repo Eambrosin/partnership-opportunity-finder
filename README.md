@@ -190,6 +190,10 @@ The workspace captures evidence around:
 - financial capacity
 - technical-service capability
 - after-sales capability
+- installation / commissioning capability
+- spare-parts capability
+- field-service coverage
+- industrial reference base
 - regulatory / market-entry capability
 - management commitment
 - pilot / market-development willingness
