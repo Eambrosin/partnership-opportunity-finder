@@ -116,6 +116,7 @@ Combines company context, partnership thesis, fit assessment, recommended model 
 - executive dashboard
 - opportunity mapping
 - partnership brief / handoff
+- shared Ambrosin Mandate Workspace navigation
 - interactive Route-to-Market Due Diligence
 - explicit due-diligence gap tracking
 - CSV input compatibility
