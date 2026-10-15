@@ -103,41 +103,7 @@ The current live interface is organized around:
 5. **Route-to-Market Due Diligence** — assess customer base, import capability, technical service, after-sales, installation, field service, financial capacity, management commitment and exclusivity conflicts.
 6. **Execution Handoff** — move validated partner candidates into ENGAGE under the same mandate.
 
-The live interface is the source of truth for the current Workspace shell; existing screenshots focus on the analytical partner views.
-
 ---
-
-## Product Preview
-
-### 1. Executive Partnership Summary
-
-![Executive Partnership Summary](screenshots/01-executive-summary.png)
-
-A concise view of the strongest partnership signals, priority and recommended next action.
-
-### 2. Executive Partnership Dashboard
-
-![Executive Partnership Dashboard](screenshots/02-executive-dashboard.png)
-
-Compares strategic fit, market access, commercial value and execution considerations.
-
-### 3. Partnership Opportunity Map
-
-![Partnership Opportunity Map](screenshots/03-opportunity-map.png)
-
-Helps visualize the relative position of partnership candidates across the opportunity set.
-
-### 4. Explainable Partnership Score
-
-![Explainable Partnership Score](screenshots/04-explainable-score.png)
-
-Shows the contribution of each decision dimension instead of presenting an unexplained total.
-
-### 5. Partnership Intelligence Workspace
-
-![Partnership Intelligence Workspace](screenshots/06-partnership-workspace.png)
-
-Combines company context, partnership thesis, fit assessment, recommended model and next action.
 
 ---
 
