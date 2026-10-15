@@ -3,6 +3,7 @@ import plotly.express as px
 import streamlit as st
 
 from mandate_workspace import render_mandate_workspace
+from workspace_persistence import load_saved_mandate, render_save_control
 from commercial_mandate import (
     MANDATE_FIELDS,
     apply_mandate_fields,
@@ -210,13 +211,15 @@ st.info(
 
 st.subheader("📂 Partnership Pipeline")
 
+cloud_mandate = load_saved_mandate(st, key_prefix="partner")
+
 mandate_file = st.file_uploader(
     "Optional Commercial Mandate JSON",
     type=["json"],
     key="commercial_mandate_json",
     help="Reuse the same client, corridor, product and objective context across the workflow.",
 )
-mandate_override = {}
+mandate_override = dict(cloud_mandate)
 if mandate_file is not None:
     try:
         mandate_override = mandate_from_json(mandate_file.getvalue())
@@ -290,6 +293,14 @@ workspace_mandate = (
         else {}
     )
 )
+workspace_mandate = render_save_control(
+    st,
+    workspace_mandate,
+    source_stage="PARTNER",
+    key_prefix="partner",
+)
+if has_mandate_context(workspace_mandate):
+    source_df = apply_mandate_fields(source_df, workspace_mandate)
 render_mandate_workspace(
     st,
     "PARTNER",
