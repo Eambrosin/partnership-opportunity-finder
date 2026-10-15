@@ -15,7 +15,7 @@ A Commercial Intelligence application for evaluating, ranking and operationalizi
 
 > **A strategically attractive partner is not automatically an executable partnership.**
 
-A portable **Commercial Mandate JSON** can be loaded to keep client, corridor, product, target market and commercial-objective context consistent with IDENTIFY, PRIORITIZE and ENGAGE.
+A Commercial Mandate can be restored automatically from the shared private workspace or loaded as portable JSON to keep client, corridor, product, target market and commercial-objective context consistent with IDENTIFY, PRIORITIZE and ENGAGE.
 
 **[Launch the live application](https://partnership-opportunity-finder-eambrosin.streamlit.app/)**
 
@@ -44,6 +44,8 @@ The platform turns partnership evaluation into an explainable decision workflow.
 PARTNER operates as the route-to-market branch of the shared **Commercial Mandate Workspace**.
 
 A mandate can be inherited from the partner pipeline, loaded as portable JSON, or resolved automatically from the shared private workspace. When a saved mandate is opened from another module, the navigation carries only its opaque **mandate_id**; after Private Workspace Access is granted, PARTNER restores the canonical client, corridor, product, target market and route-to-market objective before partner evaluation.
+
+When a mandate is active but no partner pipeline has been supplied, PARTNER waits for the mandate-specific CSV instead of loading the demonstration partnership dataset. This keeps demo candidates separate from live commercial work.
 
 Recommended progression:
 
