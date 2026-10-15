@@ -1,6 +1,6 @@
-# Partnership Intelligence Platform
+# Route-to-Market & Partner Intelligence
 
-### Explainable Partnership Scoring | Strategic Fit | Market Access | Execution Feasibility
+### Partner Qualification | Market Access | Route-to-Market Readiness | Execution Feasibility
 
 **Operational focus:** Route-to-Market & Partner Intelligence
 
@@ -39,24 +39,29 @@ The platform turns partnership evaluation into an explainable decision workflow.
 
 ---
 
-## Ambrosin Mandate Workspace
 
-PARTNER operates as the route-to-market branch of the shared **Commercial Mandate Workspace**.
+## Ambrosin Commercial Mandate Workspace
 
-A mandate can be inherited from the partner pipeline, loaded as portable JSON, or resolved automatically from the shared private workspace. When a saved mandate is opened from another module, the navigation carries only its opaque **mandate_id**; after Private Workspace Access is granted, PARTNER restores the canonical client, corridor, product, target market and route-to-market objective before partner evaluation.
+PARTNER is the route-to-market branch of the shared **Commercial Mandate Workspace**.
 
-When a mandate is active but no partner pipeline has been supplied, PARTNER waits for the mandate-specific CSV instead of loading the demonstration partnership dataset. This keeps demo candidates separate from live commercial work.
+A saved mandate can be selected directly or opened from IDENTIFY / PRIORITIZE through an opaque **mandate_id**. After **Private Workspace Access** is granted, PARTNER restores the canonical client, corridor, product, target market and route-to-market context from the private Supabase-backed workspace.
+
+Portable Commercial Mandate JSON remains available as a fallback / override.
+
+When a mandate is active but no partner pipeline has been supplied, PARTNER **does not load demo partnerships into the live mandate**. It waits for a mandate-specific partner / route-to-market CSV.
 
 Recommended progression:
 
 ```text
-IDENTIFY / Partner Universe
-          ↓
-       PARTNER
-          ↓
-        ENGAGE
-          ↓
-Opportunity / Mandate Reporting
+IDENTIFY / PRIORITIZE
+        ↓
+      PARTNER
+        ↓
+route-to-market due diligence
+        ↓
+      ENGAGE
+        ↓
+partner development / opportunity / reporting
 ```
 
 ---
@@ -84,6 +89,21 @@ NEXT COMMERCIAL ACTION
 ```
 
 The purpose is not to automate partnership decisions. It is to make commercial reasoning visible and comparable.
+
+---
+
+## Current Interface
+
+The current live interface is organized around:
+
+1. **Partnership Pipeline** — restore a saved Commercial Mandate, optionally load portable JSON and upload a mandate-specific partner CSV.
+2. **Commercial Mandate Workspace** — keep client, corridor, product and counterparty focus visible throughout partner evaluation.
+3. **Partnership Model** — configure priority regions, industries, partner types and scoring logic.
+4. **Partner Ranking** — compare strategic fit, market access, relationship context and execution feasibility.
+5. **Route-to-Market Due Diligence** — assess customer base, import capability, technical service, after-sales, installation, field service, financial capacity, management commitment and exclusivity conflicts.
+6. **Execution Handoff** — move validated partner candidates into ENGAGE under the same mandate.
+
+The live interface is the source of truth for the current Workspace shell; existing screenshots focus on the analytical partner views.
 
 ---
 
@@ -138,7 +158,8 @@ Combines company context, partnership thesis, fit assessment, recommended model 
 - executive dashboard
 - opportunity mapping
 - partnership brief / handoff
-- shared Ambrosin Mandate Workspace navigation
+- shared private Ambrosin Commercial Mandate Workspace
+- automatic mandate restoration through `mandate_id`
 - interactive Route-to-Market Due Diligence
 - explicit due-diligence gap tracking
 - CSV input compatibility
@@ -288,23 +309,28 @@ That repository includes a Partner Due Diligence Checklist, Distributor Selectio
 
 ---
 
+
 ## Architecture
 
 ```text
 app.py
   ↓
-partnership strategy
+commercial_mandate.py
+  ↓
+workspace_persistence.py / mandate_workspace.py
+  ↓
+partnership strategy configuration
   ↓
 partnership_engine.py
   ↓
-explainable scoring
+route-to-market readiness / due diligence
   ↓
-partnership archetype / model
+explainable scoring + partner model
   ↓
-dashboard + opportunity brief
+ENGAGE handoff
 ```
 
-The decision logic remains deterministic and inspectable.
+The decision logic remains deterministic and inspectable. Shared cloud persistence restores the mandate context but does not replace partner-specific evidence or due diligence.
 
 ---
 
@@ -333,13 +359,21 @@ streamlit run app.py
 
 ---
 
+
 ## Current Version
 
-**v2.0.0 — Partnership Intelligence Platform**
+**Main branch — Workspace-enabled PARTNER**
 
-Current functionality includes configurable partnership strategy, explainable scoring, partnership archetypes, executive decision support and execution-oriented next actions.
+The tagged v2 release established partnership scoring and execution-oriented decision support. The current main branch extends it with:
 
-[View Release](https://github.com/Eambrosin/partnership-opportunity-finder/releases/tag/v2.0.0)
+- shared private Commercial Mandate persistence
+- automatic `mandate_id` restoration
+- mandate-safe partner pipeline behavior
+- no demo-data mixing when a live mandate is active
+- route-to-market due-diligence continuity
+- direct progression into ENGAGE under the same mandate
+
+The main branch extends the tagged release without claiming an unpublished release number.
 
 ---
 
