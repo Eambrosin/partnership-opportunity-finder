@@ -9,6 +9,7 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white)
 ![Commercial Intelligence](https://img.shields.io/badge/Commercial%20Intelligence-PARTNER-8250df)
 [![Python CI](https://github.com/Eambrosin/partnership-opportunity-finder/actions/workflows/ci.yml/badge.svg)](https://github.com/Eambrosin/partnership-opportunity-finder/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/badge/Release-v3.0.0-success)](https://github.com/Eambrosin/partnership-opportunity-finder/releases/tag/v3.0.0)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
 A Commercial Intelligence application for evaluating, ranking and operationalizing distributors, sales agents, technical partners and other route-to-market relationships using transparent scoring, market-access signals and execution feasibility.
@@ -328,23 +329,32 @@ streamlit run app.py
 
 ## Current Version
 
-**Main branch — Workspace-enabled PARTNER**
+**v3.0.0 — Route-to-Market & Partner Intelligence**
 
-The tagged v2 release established partnership scoring and execution-oriented decision support. The current main branch extends it with:
+Version 3.0 is the current stable release of PARTNER. It positions the application as the route-to-market and execution-readiness branch of the shared Commercial Mandate Workspace.
+
+Key release capabilities include:
 
 - shared private Commercial Mandate persistence
 - automatic `mandate_id` restoration
 - mandate-safe partner pipeline behavior
-- no demo-data mixing when a live mandate is active
-- route-to-market due-diligence continuity
-- direct progression into ENGAGE under the same mandate
+- no demo-data mixing in active mandates
+- strategic-fit and market-access scoring
+- Route-to-Market Readiness
+- technical service / after-sales / import capability assessment
+- financial capacity and management-commitment evidence
+- exclusivity and competing-representation validation
+- explicit due-diligence gaps
+- direct ENGAGE handoff under the same mandate
 
-The main branch extends the tagged release without claiming an unpublished release number.
+**[View v3.0.0 Release](https://github.com/Eambrosin/partnership-opportunity-finder/releases/tag/v3.0.0)**  
+[Release Notes](docs/RELEASE_NOTES_v3.0.0.md)
 
 ---
 
 ## Documentation
 
+- [v3.0.0 Release Notes](docs/RELEASE_NOTES_v3.0.0.md)
 - [Detailed Technical Reference](docs/TECHNICAL_REFERENCE.md)
 - [Tests](tests/)
 - [Commercial Intelligence Portfolio](https://github.com/Eambrosin)
