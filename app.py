@@ -260,16 +260,23 @@ if uploaded is not None:
 
 else:
 
+    if mandate_override:
+        render_mandate_workspace(
+            st,
+            "PARTNER",
+            mandate_override,
+        )
+        st.info(
+            "Commercial Mandate loaded. Upload the partner / route-to-market "
+            "pipeline for this mandate to begin evaluation. Demo partnership "
+            "data is not mixed into an active commercial mandate."
+        )
+        st.stop()
+
     try:
         source_df = pd.read_csv(
             "data/sample_partnerships.csv"
         )
-
-        if mandate_override:
-            source_df = apply_mandate_fields(
-                source_df,
-                mandate_override,
-            )
 
         st.caption(
             "Using the demonstration partnership dataset."
