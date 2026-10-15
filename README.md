@@ -43,7 +43,7 @@ The platform turns partnership evaluation into an explainable decision workflow.
 
 PARTNER operates as the route-to-market branch of the shared **Commercial Mandate Workspace**.
 
-A mandate can be loaded as portable JSON or inherited from the partner pipeline. This keeps the same client, corridor, product, target market and route-to-market objective attached to partner evaluation.
+A mandate can be inherited from the partner pipeline, loaded as portable JSON, or resolved automatically from the shared private workspace. When a saved mandate is opened from another module, the navigation carries only its opaque **mandate_id**; after Private Workspace Access is granted, PARTNER restores the canonical client, corridor, product, target market and route-to-market objective before partner evaluation.
 
 Recommended progression:
 
